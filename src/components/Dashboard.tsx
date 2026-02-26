@@ -135,12 +135,12 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
 
   if (loading) {
     return (
-      <main className="min-h-dvh px-6 py-12">
+      <main className="min-h-dvh px-8 py-14">
         <div className="max-w-lg mx-auto">
           <div className="h-5 w-28 animate-shimmer rounded-lg mb-3" />
           <div className="h-9 w-44 animate-shimmer rounded-lg mb-16" />
-          <div className="h-52 animate-shimmer rounded-3xl mb-8" />
-          <div className="h-52 animate-shimmer rounded-3xl" />
+          <div className="h-52 animate-shimmer rounded-2xl mb-6" />
+          <div className="h-52 animate-shimmer rounded-2xl" />
         </div>
       </main>
     );
@@ -178,7 +178,7 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
         </div>
       )}
 
-      <main className="min-h-dvh px-6 py-12">
+      <main className="min-h-dvh px-8 py-14">
         <div className="max-w-lg mx-auto">
 
           {/* Header */}
@@ -225,7 +225,7 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
           <div className="animate-fade-in-delay-2">
             {filteredList.length === 0 && (
               <div className="text-center py-32">
-                <div className="w-20 h-20 rounded-3xl bg-surface mx-auto mb-8 flex items-center justify-center text-ink-subtle">
+                <div className="w-16 h-16 rounded-2xl bg-surface mx-auto mb-6 flex items-center justify-center text-ink-subtle">
                   {filter === 'active' ? (
                     <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                   ) : filter === 'done' ? (
@@ -251,17 +251,17 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
               return (
                 <div
                   key={reminder.id}
-                  className={`rounded-3xl transition-all ${i > 0 ? 'mt-8' : ''} ${
+                  className={`rounded-2xl transition-all ${i > 0 ? 'mt-6' : ''} ${
                     reminder.completed
                       ? 'bg-surface/60 opacity-50'
                       : 'bg-elevated border border-border'
                   }`}
                 >
-                  <div className="px-8 pt-8 pb-7">
+                  <div className="px-6 pt-6 pb-5">
                     {/* Category icon + due badge */}
-                    <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center justify-between mb-6">
                       <div className="flex items-center gap-3">
-                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
+                        <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${
                           days < 0 ? 'bg-danger/10 text-danger' : 'bg-mint/12 text-mint'
                         }`}>
                           <CatIcon id={reminder.category} />
@@ -296,14 +296,14 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
                     <div className="flex border-t border-border">
                       <button
                         onClick={() => markDone(reminder.id)}
-                        className="flex-1 py-5 text-[16px] font-semibold text-mint cursor-pointer transition-all active:bg-mint/5 rounded-bl-3xl"
+                        className="flex-1 py-4 text-[15px] font-semibold text-mint cursor-pointer transition-all active:bg-mint/5 rounded-bl-2xl"
                       >
                         Done
                       </button>
                       <div className="w-px bg-border" />
                       <button
                         onClick={() => snooze(reminder.id)}
-                        className="flex-1 py-5 text-[16px] font-semibold text-ink-muted cursor-pointer transition-all active:bg-surface rounded-br-3xl"
+                        className="flex-1 py-4 text-[15px] font-semibold text-ink-muted cursor-pointer transition-all active:bg-surface rounded-br-2xl"
                       >
                         Snooze
                       </button>

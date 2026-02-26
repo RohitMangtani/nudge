@@ -156,7 +156,7 @@ export default function OnboardingFlow() {
   /* Phase 1: Categories */
   if (phase === 'categories') {
     return (
-      <main className="min-h-dvh px-6 py-12">
+      <main className="min-h-dvh px-8 py-14">
         <div className="max-w-md mx-auto animate-fade-in">
           {isUpdate && (
             <button
@@ -174,14 +174,14 @@ export default function OnboardingFlow() {
             Pick the areas that matter to you.
           </p>
 
-          <div className="grid grid-cols-2 gap-4 mb-16">
+          <div className="grid grid-cols-2 gap-4 mb-14">
             {CATEGORIES.map((cat) => {
               const selected = selectedCats.includes(cat.id);
               return (
                 <button
                   key={cat.id}
                   onClick={() => toggleCat(cat.id)}
-                  className={`text-left px-4 py-5 rounded-2xl cursor-pointer transition-all active:scale-[0.97] ${
+                  className={`text-left px-5 py-6 rounded-2xl cursor-pointer transition-all active:scale-[0.97] ${
                     selected
                       ? 'bg-mint-glow ring-[1.5px] ring-mint'
                       : 'bg-surface hover:bg-surface-hover'
@@ -190,7 +190,8 @@ export default function OnboardingFlow() {
                   <div className={`mb-3 ${selected ? 'text-mint' : 'text-ink-muted'}`}>
                     <CatIcon id={cat.id} />
                   </div>
-                  <div className="text-[16px] font-semibold">{cat.label}</div>
+                  <div className="text-[15px] font-semibold mb-1">{cat.label}</div>
+                  <div className="text-[13px] text-ink-muted leading-relaxed">{cat.desc}</div>
                 </button>
               );
             })}
@@ -199,7 +200,7 @@ export default function OnboardingFlow() {
           <button
             onClick={() => setPhase('questions')}
             disabled={selectedCats.length === 0}
-            className="w-full h-[60px] bg-mint hover:bg-mint-hover text-white font-semibold rounded-full text-[17px] cursor-pointer transition-all disabled:opacity-20 active:scale-[0.98]"
+            className="w-full h-[56px] bg-mint hover:bg-mint-hover text-white font-semibold rounded-2xl text-[17px] cursor-pointer transition-all disabled:opacity-20 active:scale-[0.98]"
           >
             {selectedCats.length === 0
               ? 'Pick at least one'
@@ -249,7 +250,7 @@ export default function OnboardingFlow() {
   };
 
   return (
-    <main className="h-dvh flex flex-col px-6 py-12 overflow-hidden">
+    <main className="h-dvh flex flex-col px-8 py-14 overflow-hidden">
       <div className="max-w-md mx-auto w-full">
         {/* Back */}
         <button
@@ -292,7 +293,7 @@ export default function OnboardingFlow() {
                   <button
                     key={opt}
                     onClick={() => handleChoice(opt)}
-                    className="w-full text-left px-7 py-6 rounded-2xl bg-surface hover:bg-surface-hover text-[17px] cursor-pointer transition-all active:scale-[0.98]"
+                    className="w-full text-left px-6 py-5 rounded-xl bg-surface hover:bg-surface-hover text-[16px] cursor-pointer transition-all active:scale-[0.98]"
                   >
                     {opt}
                   </button>
@@ -304,13 +305,13 @@ export default function OnboardingFlow() {
               <div className="flex gap-5">
                 <button
                   onClick={() => handleChoice('Yes')}
-                  className="flex-1 py-6 rounded-2xl bg-surface hover:bg-surface-hover text-[17px] font-medium cursor-pointer transition-all active:scale-[0.98]"
+                  className="flex-1 py-5 rounded-xl bg-surface hover:bg-surface-hover text-[16px] font-medium cursor-pointer transition-all active:scale-[0.98]"
                 >
                   Yes
                 </button>
                 <button
                   onClick={() => handleChoice('No')}
-                  className="flex-1 py-6 rounded-2xl bg-surface hover:bg-surface-hover text-[17px] font-medium cursor-pointer transition-all active:scale-[0.98]"
+                  className="flex-1 py-5 rounded-xl bg-surface hover:bg-surface-hover text-[16px] font-medium cursor-pointer transition-all active:scale-[0.98]"
                 >
                   No
                 </button>
@@ -324,13 +325,13 @@ export default function OnboardingFlow() {
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleInput()}
                   placeholder={activeQ.placeholder}
-                  className="w-full px-7 py-6 rounded-2xl bg-surface text-ink text-[17px] focus:outline-none focus:ring-[1.5px] focus:ring-mint/50 transition-all placeholder:text-ink-subtle"
+                  className="w-full px-6 py-5 rounded-xl bg-surface text-ink text-[16px] focus:outline-none focus:ring-[1.5px] focus:ring-mint/50 transition-all placeholder:text-ink-subtle"
                   autoFocus
                 />
                 <button
                   onClick={handleInput}
                   disabled={!inputValue.trim()}
-                  className="w-full py-5 rounded-2xl bg-mint text-white font-semibold text-[17px] cursor-pointer transition-all hover:bg-mint-hover disabled:opacity-20 active:scale-[0.98]"
+                  className="w-full py-4 rounded-xl bg-mint text-white font-semibold text-[16px] cursor-pointer transition-all hover:bg-mint-hover disabled:opacity-20 active:scale-[0.98]"
                 >
                   Next
                 </button>
