@@ -13,8 +13,7 @@ interface Question {
   followUp?: Question;
 }
 
-/* SVG icons for each category */
-function CatIcon({ id, size = 24 }: { id: string; size?: number }) {
+function CatIcon({ id, size = 26 }: { id: string; size?: number }) {
   const props = { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
   switch (id) {
     case 'health':
@@ -152,42 +151,43 @@ export default function OnboardingFlow() {
     router.refresh();
   };
 
-  /* Phase 1: Category selection */
+  /* Phase 1: Categories */
   if (phase === 'categories') {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6 py-16">
-        <div className="max-w-md w-full animate-fade-in">
+      <main className="min-h-screen px-6 py-16">
+        <div className="max-w-md mx-auto animate-fade-in">
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-[15px] text-ink-muted mb-10 cursor-pointer active:opacity-60 transition-all"
+            className="flex items-center gap-2 text-[15px] text-ink-muted mb-12 cursor-pointer active:opacity-60 transition-all"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
             Back
           </button>
-          <h1 className="text-[32px] font-bold tracking-tight leading-tight mb-4">
+
+          <h1 className="text-[34px] font-bold tracking-tight leading-tight mb-4">
             What should we track?
           </h1>
-          <p className="text-ink-muted text-[16px] mb-14">
+          <p className="text-ink-muted text-[17px] mb-16">
             Pick the areas that matter to you.
           </p>
 
-          <div className="grid grid-cols-2 gap-4 mb-14">
+          <div className="grid grid-cols-2 gap-5 mb-16">
             {CATEGORIES.map((cat) => {
               const selected = selectedCats.includes(cat.id);
               return (
                 <button
                   key={cat.id}
                   onClick={() => toggleCat(cat.id)}
-                  className={`text-left p-6 rounded-2xl cursor-pointer transition-all active:scale-[0.97] ${
+                  className={`text-left p-7 rounded-3xl cursor-pointer transition-all active:scale-[0.97] ${
                     selected
                       ? 'bg-mint-glow ring-[1.5px] ring-mint'
                       : 'bg-surface hover:bg-surface-hover'
                   }`}
                 >
-                  <div className={`mb-4 ${selected ? 'text-mint' : 'text-ink-muted'}`}>
+                  <div className={`mb-5 ${selected ? 'text-mint' : 'text-ink-muted'}`}>
                     <CatIcon id={cat.id} />
                   </div>
-                  <div className="text-[16px] font-semibold mb-1">{cat.label}</div>
+                  <div className="text-[17px] font-semibold mb-1.5">{cat.label}</div>
                   <div className="text-[14px] text-ink-muted leading-snug">{cat.desc}</div>
                 </button>
               );
@@ -197,7 +197,7 @@ export default function OnboardingFlow() {
           <button
             onClick={() => setPhase('questions')}
             disabled={selectedCats.length === 0}
-            className="w-full h-[58px] bg-mint hover:bg-mint-hover text-white font-semibold rounded-full text-[16px] cursor-pointer transition-all disabled:opacity-20 active:scale-[0.98]"
+            className="w-full h-[60px] bg-mint hover:bg-mint-hover text-white font-semibold rounded-full text-[17px] cursor-pointer transition-all disabled:opacity-20 active:scale-[0.98]"
           >
             {selectedCats.length === 0
               ? 'Pick at least one'
@@ -213,20 +213,20 @@ export default function OnboardingFlow() {
     return (
       <main className="min-h-screen flex items-center justify-center px-6">
         <div className="text-center animate-fade-in">
-          <div className="w-16 h-16 rounded-2xl bg-mint mx-auto mb-10 flex items-center justify-center animate-breathe">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <div className="w-20 h-20 rounded-3xl bg-mint mx-auto mb-12 flex items-center justify-center animate-breathe">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
               <path d="M13.73 21a2 2 0 0 1-3.46 0" />
             </svg>
           </div>
-          <p className="text-[20px] font-semibold mb-3">Building your reminders</p>
-          <p className="text-[16px] text-ink-muted">Just a few seconds...</p>
+          <p className="text-[22px] font-semibold mb-3">Building your reminders</p>
+          <p className="text-[17px] text-ink-muted">Just a few seconds...</p>
         </div>
       </main>
     );
   }
 
-  /* Phase 2: Questions */
+  /* Phase 2: Questions — one at a time, centered, spacious */
   if (!activeQ) return null;
 
   const catInfo = CATEGORIES.find((c) => c.id === currentCat);
@@ -247,97 +247,102 @@ export default function OnboardingFlow() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-6 py-16">
-      <div className="max-w-md w-full">
-        {/* Back + Progress */}
+    <main className="min-h-screen flex flex-col px-6 py-16">
+      <div className="max-w-md mx-auto w-full">
+        {/* Back */}
         <button
           onClick={goBack}
-          className="flex items-center gap-2 text-[15px] text-ink-muted mb-10 cursor-pointer active:opacity-60 transition-all"
+          className="flex items-center gap-2 text-[15px] text-ink-muted mb-6 cursor-pointer active:opacity-60 transition-all"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
           Back
         </button>
-        <div className="mb-14">
-          <div className="flex items-center justify-between mb-4">
+
+        {/* Progress bar */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-3">
             <span className="text-[15px] text-ink-muted font-medium flex items-center gap-2">
               <span className="text-mint"><CatIcon id={currentCat} size={18} /></span>
               {catInfo?.label}
             </span>
             <span className="text-[14px] text-ink-subtle">{Math.round(progress)}%</span>
           </div>
-          <div className="h-1 bg-surface rounded-full overflow-hidden">
+          <div className="h-1.5 bg-surface rounded-full overflow-hidden">
             <div
               className="h-full bg-mint rounded-full transition-all duration-500 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
         </div>
+      </div>
 
-        {/* Question */}
-        <div key={`${activeQ.category}-${activeQ.key}`} className="animate-slide-up">
-          <h2 className="text-[26px] font-bold tracking-tight leading-tight mb-12">
-            {activeQ.text}
-          </h2>
+      {/* Question — centered in remaining space */}
+      <div className="flex-1 flex items-center justify-center">
+        <div className="max-w-md w-full px-0">
+          <div key={`${activeQ.category}-${activeQ.key}`} className="animate-slide-up">
+            <h2 className="text-[30px] font-bold tracking-tight leading-tight mb-14">
+              {activeQ.text}
+            </h2>
 
-          {activeQ.type === 'choice' && (
-            <div className="space-y-3">
-              {activeQ.options?.map((opt) => (
+            {activeQ.type === 'choice' && (
+              <div className="space-y-4">
+                {activeQ.options?.map((opt) => (
+                  <button
+                    key={opt}
+                    onClick={() => handleChoice(opt)}
+                    className="w-full text-left px-7 py-6 rounded-2xl bg-surface hover:bg-surface-hover text-[17px] cursor-pointer transition-all active:scale-[0.98]"
+                  >
+                    {opt}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {activeQ.type === 'yesno' && (
+              <div className="flex gap-5">
                 <button
-                  key={opt}
-                  onClick={() => handleChoice(opt)}
-                  className="w-full text-left px-6 py-5 rounded-2xl bg-surface hover:bg-surface-hover text-[16px] cursor-pointer transition-all active:scale-[0.98]"
+                  onClick={() => handleChoice('Yes')}
+                  className="flex-1 py-6 rounded-2xl bg-surface hover:bg-surface-hover text-[17px] font-medium cursor-pointer transition-all active:scale-[0.98]"
                 >
-                  {opt}
+                  Yes
                 </button>
-              ))}
-            </div>
-          )}
+                <button
+                  onClick={() => handleChoice('No')}
+                  className="flex-1 py-6 rounded-2xl bg-surface hover:bg-surface-hover text-[17px] font-medium cursor-pointer transition-all active:scale-[0.98]"
+                >
+                  No
+                </button>
+              </div>
+            )}
 
-          {activeQ.type === 'yesno' && (
-            <div className="flex gap-4">
-              <button
-                onClick={() => handleChoice('Yes')}
-                className="flex-1 py-5 rounded-2xl bg-surface hover:bg-surface-hover text-[16px] font-medium cursor-pointer transition-all active:scale-[0.98]"
-              >
-                Yes
-              </button>
-              <button
-                onClick={() => handleChoice('No')}
-                className="flex-1 py-5 rounded-2xl bg-surface hover:bg-surface-hover text-[16px] font-medium cursor-pointer transition-all active:scale-[0.98]"
-              >
-                No
-              </button>
-            </div>
-          )}
+            {activeQ.type === 'input' && (
+              <div className="space-y-5">
+                <input
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleInput()}
+                  placeholder={activeQ.placeholder}
+                  className="w-full px-7 py-6 rounded-2xl bg-surface text-ink text-[17px] focus:outline-none focus:ring-[1.5px] focus:ring-mint/50 transition-all placeholder:text-ink-subtle"
+                  autoFocus
+                />
+                <button
+                  onClick={handleInput}
+                  disabled={!inputValue.trim()}
+                  className="w-full py-5 rounded-2xl bg-mint text-white font-semibold text-[17px] cursor-pointer transition-all hover:bg-mint-hover disabled:opacity-20 active:scale-[0.98]"
+                >
+                  Next
+                </button>
+              </div>
+            )}
 
-          {activeQ.type === 'input' && (
-            <div className="flex gap-4">
-              <input
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleInput()}
-                placeholder={activeQ.placeholder}
-                className="flex-1 px-6 py-5 rounded-2xl bg-surface text-ink text-[16px] focus:outline-none focus:ring-[1.5px] focus:ring-mint/50 transition-all placeholder:text-ink-subtle"
-                autoFocus
-              />
-              <button
-                onClick={handleInput}
-                disabled={!inputValue.trim()}
-                className="px-8 py-5 rounded-2xl bg-mint text-white font-semibold text-[16px] cursor-pointer transition-all hover:bg-mint-hover disabled:opacity-20 active:scale-[0.98]"
-              >
-                Next
-              </button>
-            </div>
-          )}
+            <button
+              onClick={advance}
+              className="mt-10 text-[15px] text-ink-subtle hover:text-ink-muted cursor-pointer transition-all"
+            >
+              Skip
+            </button>
+          </div>
         </div>
-
-        {/* Skip */}
-        <button
-          onClick={advance}
-          className="mt-12 text-[15px] text-ink-subtle hover:text-ink-muted cursor-pointer transition-all"
-        >
-          Skip this question
-        </button>
       </div>
     </main>
   );
