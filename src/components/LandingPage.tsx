@@ -86,30 +86,9 @@ export default function LandingPage() {
             )}
           </button>
 
-          <p className="text-center text-[14px] text-ink-subtle mt-5">
-            Sign in with Google. Takes 2 minutes.
-          </p>
-
           {error && (
             <p className="text-danger text-[14px] mt-4 text-center">{error}</p>
           )}
-        </div>
-
-        {/* Proof strip */}
-        <div className="animate-fade-in-delay-3 flex items-center justify-center gap-10 pt-4">
-          {[
-            { n: '2 min', sub: 'setup' },
-            { n: '6', sub: 'life areas' },
-            { n: '\u221E', sub: 'peace of mind' },
-          ].map((s, i) => (
-            <div key={s.sub} className="flex items-center gap-10">
-              {i > 0 && <div className="w-px h-5 bg-ink-subtle/30" />}
-              <div className="text-center">
-                <div className="text-[17px] font-semibold text-ink">{s.n}</div>
-                <div className="text-[12px] text-ink-muted uppercase tracking-widest mt-1.5">{s.sub}</div>
-              </div>
-            </div>
-          ))}
         </div>
       </div>
     </main>

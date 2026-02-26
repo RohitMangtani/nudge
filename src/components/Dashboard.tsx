@@ -73,6 +73,7 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
   const [filter, setFilter] = useState<string>('active');
   const [menuOpen, setMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [resetting, setResetting] = useState(false);
 
   const fetchReminders = useCallback(async () => {
     const res = await fetch('/api/reminders');
@@ -109,6 +110,15 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
     await firebaseSignOut();
     await fetch('/api/auth/signout', { method: 'POST' });
     router.push('/');
+    router.refresh();
+  };
+
+  const handleReset = async () => {
+    setResetting(true);
+    await fetch('/api/reset', { method: 'POST' });
+    setMenuOpen(false);
+    setResetting(false);
+    router.push('/onboarding');
     router.refresh();
   };
 
@@ -152,26 +162,43 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
             onClick={() => setMenuOpen(false)}
           />
           <div className="absolute bottom-0 left-0 right-0 bg-elevated rounded-t-3xl p-8 pb-12 safe-area-bottom animate-slide-up">
-            <div className="w-10 h-1 bg-ink-subtle rounded-full mx-auto mb-8" />
-            <button
-              onClick={() => { setMenuOpen(false); router.push('/onboarding'); }}
-              className="block w-full text-left py-5 text-[17px] font-medium cursor-pointer active:opacity-60 transition-all"
-            >
-              Edit answers
-            </button>
-            <div className="h-px bg-border my-2" />
-            <button
-              onClick={handleSignOut}
-              className="block w-full text-left py-5 text-[17px] text-ink-muted cursor-pointer active:opacity-60 transition-all"
-            >
-              Sign out
-            </button>
-            <button
-              onClick={() => setMenuOpen(false)}
-              className="block w-full mt-6 py-4 text-center text-[16px] font-semibold bg-surface rounded-2xl cursor-pointer active:scale-[0.98] transition-all"
-            >
-              Cancel
-            </button>
+            {/* Back arrow + title */}
+            <div className="flex items-center gap-4 mb-10">
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="w-11 h-11 rounded-full bg-surface flex items-center justify-center cursor-pointer active:scale-95 transition-all"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+              </button>
+              <span className="text-[18px] font-semibold">Settings</span>
+            </div>
+
+            <div className="space-y-3">
+              <button
+                onClick={() => { setMenuOpen(false); router.push('/onboarding'); }}
+                className="flex items-center gap-4 w-full px-6 py-5 rounded-2xl bg-surface hover:bg-surface-hover text-[16px] font-medium cursor-pointer active:scale-[0.98] transition-all"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /></svg>
+                Edit answers
+              </button>
+
+              <button
+                onClick={handleReset}
+                disabled={resetting}
+                className="flex items-center gap-4 w-full px-6 py-5 rounded-2xl bg-surface hover:bg-surface-hover text-[16px] font-medium cursor-pointer active:scale-[0.98] transition-all disabled:opacity-40"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>
+                {resetting ? 'Resetting...' : 'Start over'}
+              </button>
+
+              <button
+                onClick={handleSignOut}
+                className="flex items-center gap-4 w-full px-6 py-5 rounded-2xl bg-surface hover:bg-surface-hover text-[16px] font-medium text-ink-muted cursor-pointer active:scale-[0.98] transition-all"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
+                Sign out
+              </button>
+            </div>
           </div>
         </div>
       )}
