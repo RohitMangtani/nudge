@@ -4,6 +4,7 @@ import { initializeApp, getApps } from 'firebase/app';
 import {
   getAuth,
   GoogleAuthProvider,
+  OAuthProvider,
   signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
@@ -27,6 +28,24 @@ function getFirebaseAuth() {
 export async function signInWithGoogle(): Promise<string> {
   const auth = getFirebaseAuth();
   const provider = new GoogleAuthProvider();
+  try {
+    const result = await signInWithPopup(auth, provider);
+    return await result.user.getIdToken();
+  } catch (err: unknown) {
+    const code = (err as { code?: string }).code;
+    if (code === 'auth/popup-blocked' || code === 'auth/popup-closed-by-user') {
+      await signInWithRedirect(auth, provider);
+      return '';
+    }
+    throw err;
+  }
+}
+
+export async function signInWithApple(): Promise<string> {
+  const auth = getFirebaseAuth();
+  const provider = new OAuthProvider('apple.com');
+  provider.addScope('email');
+  provider.addScope('name');
   try {
     const result = await signInWithPopup(auth, provider);
     return await result.user.getIdToken();
