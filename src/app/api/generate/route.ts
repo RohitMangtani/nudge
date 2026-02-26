@@ -12,7 +12,7 @@ export async function POST() {
   const supabase = getServerSupabase();
 
   const { data: answers } = await supabase
-    .from('answers')
+    .from('nudge_answers')
     .select('*')
     .eq('user_id', user.id);
 
@@ -21,7 +21,7 @@ export async function POST() {
   }
 
   // Delete old AI-generated reminders before regenerating
-  await supabase.from('reminders').delete().eq('user_id', user.id);
+  await supabase.from('nudge_reminders').delete().eq('user_id', user.id);
 
   const answersText = answers
     .map((a) => `[${a.category}] ${a.key}: ${a.value}`)
@@ -86,7 +86,7 @@ Return ONLY the JSON array, no markdown, no explanation.`,
     recurrence_label: r.recurrence_label || null,
   }));
 
-  const { error } = await supabase.from('reminders').insert(rows);
+  const { error } = await supabase.from('nudge_reminders').insert(rows);
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

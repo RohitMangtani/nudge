@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   const supabase = getServerSupabase();
 
   const { data: existing } = await supabase
-    .from('users')
+    .from('nudge_users')
     .select('*')
     .eq('firebase_uid', decoded.uid)
     .single();
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   let user = existing;
   if (!user) {
     const { data: newUser } = await supabase
-      .from('users')
+      .from('nudge_users')
       .insert({
         email: decoded.email || '',
         name: decoded.name || 'Friend',

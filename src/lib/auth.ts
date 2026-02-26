@@ -12,7 +12,7 @@ export async function getUser(): Promise<DbUser | null> {
   const decoded = await verifyIdToken(token);
   const supabase = getServerSupabase();
   const { data } = await supabase
-    .from('users')
+    .from('nudge_users')
     .select('*')
     .eq('firebase_uid', decoded.uid)
     .single();

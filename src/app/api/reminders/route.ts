@@ -8,7 +8,7 @@ export async function GET() {
 
   const supabase = getServerSupabase();
   const { data } = await supabase
-    .from('reminders')
+    .from('nudge_reminders')
     .select('*')
     .eq('user_id', user.id)
     .order('due_date', { ascending: true });
@@ -28,7 +28,7 @@ export async function PUT(req: NextRequest) {
   if (completed !== undefined) updates.completed = completed;
   if (snoozed_until !== undefined) updates.snoozed_until = snoozed_until;
 
-  await supabase.from('reminders').update(updates).eq('id', reminderId).eq('user_id', user.id);
+  await supabase.from('nudge_reminders').update(updates).eq('id', reminderId).eq('user_id', user.id);
   return NextResponse.json({ ok: true });
 }
 
@@ -40,6 +40,6 @@ export async function DELETE(req: NextRequest) {
   if (!reminderId) return NextResponse.json({ error: 'Missing reminderId' }, { status: 400 });
 
   const supabase = getServerSupabase();
-  await supabase.from('reminders').delete().eq('id', reminderId).eq('user_id', user.id);
+  await supabase.from('nudge_reminders').delete().eq('id', reminderId).eq('user_id', user.id);
   return NextResponse.json({ ok: true });
 }

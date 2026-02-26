@@ -1,4 +1,4 @@
-CREATE TABLE users (
+CREATE TABLE nudge_users (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   email text UNIQUE NOT NULL,
   name text NOT NULL DEFAULT 'Friend',
@@ -7,9 +7,9 @@ CREATE TABLE users (
   created_at timestamptz DEFAULT now()
 );
 
-CREATE TABLE answers (
+CREATE TABLE nudge_answers (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id uuid REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+  user_id uuid REFERENCES nudge_users(id) ON DELETE CASCADE NOT NULL,
   category text NOT NULL,
   key text NOT NULL,
   value text NOT NULL,
@@ -17,9 +17,9 @@ CREATE TABLE answers (
   UNIQUE(user_id, category, key)
 );
 
-CREATE TABLE reminders (
+CREATE TABLE nudge_reminders (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id uuid REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+  user_id uuid REFERENCES nudge_users(id) ON DELETE CASCADE NOT NULL,
   category text NOT NULL,
   title text NOT NULL,
   description text,
@@ -31,6 +31,6 @@ CREATE TABLE reminders (
   created_at timestamptz DEFAULT now()
 );
 
-CREATE INDEX idx_answers_user ON answers(user_id);
-CREATE INDEX idx_reminders_user ON reminders(user_id);
-CREATE INDEX idx_reminders_due ON reminders(user_id, due_date) WHERE completed = false;
+CREATE INDEX idx_nudge_answers_user ON nudge_answers(user_id);
+CREATE INDEX idx_nudge_reminders_user ON nudge_reminders(user_id);
+CREATE INDEX idx_nudge_reminders_due ON nudge_reminders(user_id, due_date) WHERE completed = false;

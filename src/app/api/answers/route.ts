@@ -8,7 +8,7 @@ export async function GET() {
 
   const supabase = getServerSupabase();
   const { data } = await supabase
-    .from('answers')
+    .from('nudge_answers')
     .select('*')
     .eq('user_id', user.id)
     .order('created_at', { ascending: true });
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
 
   for (const a of answers) {
     await supabase
-      .from('answers')
+      .from('nudge_answers')
       .upsert(
         { user_id: user.id, category: a.category, key: a.key, value: a.value },
         { onConflict: 'user_id,category,key' }
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Mark onboarding complete
-  await supabase.from('users').update({ onboarding_complete: true }).eq('id', user.id);
+  await supabase.from('nudge_users').update({ onboarding_complete: true }).eq('id', user.id);
 
   return NextResponse.json({ ok: true });
 }
