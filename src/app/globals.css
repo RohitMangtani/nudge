@@ -102,3 +102,10 @@ button, a {
 
 /* Hide scrollbar but keep functionality */
 ::-webkit-scrollbar { width: 0; }
+
+/* Utility: hide horizontal scrollbar on filter pills */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Safe area for bottom sheet on notched phones */
+.safe-area-bottom { padding-bottom: max(2.5rem, env(safe-area-inset-bottom)); }
