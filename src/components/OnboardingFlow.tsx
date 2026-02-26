@@ -197,7 +197,7 @@ export default function OnboardingFlow() {
           <button
             onClick={() => setPhase('questions')}
             disabled={selectedCats.length === 0}
-            className="w-full h-[58px] bg-mint hover:bg-mint-hover text-black font-semibold rounded-full text-[16px] cursor-pointer transition-all disabled:opacity-20 active:scale-[0.98]"
+            className="w-full h-[58px] bg-mint hover:bg-mint-hover text-white font-semibold rounded-full text-[16px] cursor-pointer transition-all disabled:opacity-20 active:scale-[0.98]"
           >
             {selectedCats.length === 0
               ? 'Pick at least one'
@@ -214,7 +214,7 @@ export default function OnboardingFlow() {
       <main className="min-h-screen flex items-center justify-center px-6">
         <div className="text-center animate-fade-in">
           <div className="w-16 h-16 rounded-2xl bg-mint mx-auto mb-10 flex items-center justify-center animate-breathe">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
               <path d="M13.73 21a2 2 0 0 1-3.46 0" />
             </svg>
@@ -323,7 +323,7 @@ export default function OnboardingFlow() {
               <button
                 onClick={handleInput}
                 disabled={!inputValue.trim()}
-                className="px-8 py-5 rounded-2xl bg-mint text-black font-semibold text-[16px] cursor-pointer transition-all hover:bg-mint-hover disabled:opacity-20 active:scale-[0.98]"
+                className="px-8 py-5 rounded-2xl bg-mint text-white font-semibold text-[16px] cursor-pointer transition-all hover:bg-mint-hover disabled:opacity-20 active:scale-[0.98]"
               >
                 Next
               </button>

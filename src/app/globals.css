@@ -1,28 +1,28 @@
 @import "tailwindcss";
 
 @theme {
-  /* Warm dark palette — not cold, not sterile */
-  --color-void: #000000;
-  --color-dark: #020202;
-  --color-surface: #0e0e0e;
-  --color-surface-hover: #171717;
-  --color-elevated: #1c1c1c;
-  --color-ink: #f5f5f5;
-  --color-ink-secondary: #d4d4d4;
-  --color-ink-muted: #737373;
-  --color-ink-subtle: #404040;
-  --color-mint: #00c805;
-  --color-mint-hover: #00b004;
-  --color-mint-glow: rgba(0, 200, 5, 0.10);
-  --color-mint-dim: rgba(0, 200, 5, 0.04);
-  --color-mint-soft: rgba(0, 200, 5, 0.15);
-  --color-danger: #ff5000;
-  --color-danger-dim: rgba(255, 80, 0, 0.08);
-  --color-warn: #f5a623;
-  --color-warn-dim: rgba(245, 166, 35, 0.08);
-  --color-border: #1a1a1a;
-  --color-border-light: #262626;
-  --color-divider: #141414;
+  /* Creamsicle — warm, light, inviting */
+  --color-void: #FFFFFF;
+  --color-dark: #FFFBF7;
+  --color-surface: #F5F0EB;
+  --color-surface-hover: #EDE7E1;
+  --color-elevated: #FFFFFF;
+  --color-ink: #1C1917;
+  --color-ink-secondary: #44403C;
+  --color-ink-muted: #78716C;
+  --color-ink-subtle: #A8A29E;
+  --color-mint: #D4845A;
+  --color-mint-hover: #C47A50;
+  --color-mint-glow: rgba(212, 132, 90, 0.12);
+  --color-mint-dim: rgba(212, 132, 90, 0.06);
+  --color-mint-soft: rgba(212, 132, 90, 0.15);
+  --color-danger: #DC2626;
+  --color-danger-dim: rgba(220, 38, 38, 0.06);
+  --color-warn: #D97706;
+  --color-warn-dim: rgba(217, 119, 6, 0.06);
+  --color-border: #E7E2DD;
+  --color-border-light: #DDD7D1;
+  --color-divider: #F0EBE6;
   --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -55,7 +55,7 @@ body {
 }
 
 @keyframes breathe {
-  0%, 100% { opacity: 0.4; transform: scale(0.96); }
+  0%, 100% { opacity: 0.6; transform: scale(0.97); }
   50% { opacity: 1; transform: scale(1); }
 }
 
