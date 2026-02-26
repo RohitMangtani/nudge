@@ -174,24 +174,23 @@ export default function OnboardingFlow() {
             Pick the areas that matter to you.
           </p>
 
-          <div className="grid grid-cols-2 gap-5 mb-16">
+          <div className="grid grid-cols-2 gap-4 mb-16">
             {CATEGORIES.map((cat) => {
               const selected = selectedCats.includes(cat.id);
               return (
                 <button
                   key={cat.id}
                   onClick={() => toggleCat(cat.id)}
-                  className={`text-left p-5 rounded-2xl cursor-pointer transition-all active:scale-[0.97] ${
+                  className={`text-left px-4 py-5 rounded-2xl cursor-pointer transition-all active:scale-[0.97] ${
                     selected
                       ? 'bg-mint-glow ring-[1.5px] ring-mint'
                       : 'bg-surface hover:bg-surface-hover'
                   }`}
                 >
-                  <div className={`mb-4 ${selected ? 'text-mint' : 'text-ink-muted'}`}>
+                  <div className={`mb-3 ${selected ? 'text-mint' : 'text-ink-muted'}`}>
                     <CatIcon id={cat.id} />
                   </div>
-                  <div className="text-[16px] font-semibold mb-1">{cat.label}</div>
-                  <div className="text-[13px] text-ink-muted leading-relaxed">{cat.desc}</div>
+                  <div className="text-[16px] font-semibold">{cat.label}</div>
                 </button>
               );
             })}
