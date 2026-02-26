@@ -181,7 +181,7 @@ export default function OnboardingFlow() {
                 <button
                   key={cat.id}
                   onClick={() => toggleCat(cat.id)}
-                  className={`text-left px-6 py-7 rounded-3xl cursor-pointer transition-all active:scale-[0.97] ${
+                  className={`text-left p-5 rounded-2xl cursor-pointer transition-all active:scale-[0.97] ${
                     selected
                       ? 'bg-mint-glow ring-[1.5px] ring-mint'
                       : 'bg-surface hover:bg-surface-hover'
@@ -191,7 +191,7 @@ export default function OnboardingFlow() {
                     <CatIcon id={cat.id} />
                   </div>
                   <div className="text-[16px] font-semibold mb-1">{cat.label}</div>
-                  <div className="text-[13px] text-ink-muted leading-snug">{cat.desc}</div>
+                  <div className="text-[13px] text-ink-muted leading-relaxed">{cat.desc}</div>
                 </button>
               );
             })}

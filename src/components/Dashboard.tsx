@@ -196,7 +196,7 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
           </div>
 
           {/* Filter tabs */}
-          <div className="flex gap-4 mb-12 overflow-x-auto no-scrollbar animate-fade-in-delay">
+          <div className="flex gap-3 mb-12 overflow-x-auto no-scrollbar animate-fade-in-delay">
             {[
               { key: 'active', label: 'Upcoming', count: active.length },
               { key: 'snoozed', label: 'Snoozed', count: snoozed.length },
@@ -205,7 +205,7 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
               <button
                 key={f.key}
                 onClick={() => setFilter(f.key)}
-                className={`text-[15px] h-[44px] px-6 rounded-full cursor-pointer transition-all active:scale-95 whitespace-nowrap inline-flex items-center gap-2 ${
+                className={`text-[15px] px-5 py-2.5 rounded-xl cursor-pointer transition-all active:scale-95 whitespace-nowrap inline-flex items-center gap-2 ${
                   filter === f.key
                     ? 'bg-ink text-dark font-semibold'
                     : 'text-ink-muted hover:text-ink-secondary hover:bg-surface'
@@ -213,9 +213,7 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
               >
                 {f.label}
                 {f.count > 0 && (
-                  <span className={`text-[13px] min-w-[24px] h-[24px] px-1.5 rounded-full flex items-center justify-center ${
-                    filter === f.key ? 'bg-dark/20 text-dark' : 'bg-surface text-ink-muted'
-                  }`}>
+                  <span className={`text-[13px] opacity-60`}>
                     {f.count}
                   </span>
                 )}
@@ -271,7 +269,7 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
                         <span className="text-[15px] text-ink-muted font-medium">{cat.label}</span>
                       </div>
                       {!reminder.completed && (
-                        <span className={`text-[14px] font-semibold px-4 py-2 rounded-full ${dueBadgeStyle(days)}`}>
+                        <span className={`text-[13px] font-semibold px-3.5 py-1.5 rounded-lg ${dueBadgeStyle(days)}`}>
                           {friendlyDue(days)}
                         </span>
                       )}
