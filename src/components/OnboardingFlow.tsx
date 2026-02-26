@@ -218,7 +218,7 @@ export default function OnboardingFlow() {
     );
   }
 
-  /* Phase 2: Questions — one at a time, centered, spacious */
+  /* Phase 2: Questions */
   if (!activeQ) return null;
 
   const catInfo = CATEGORIES.find((c) => c.id === currentCat);
@@ -268,7 +268,7 @@ export default function OnboardingFlow() {
         </div>
       </div>
 
-      {/* Question — centered in remaining space */}
+      {/* Question centered in remaining space */}
       <div className="flex-1 flex items-center justify-center">
         <div className="max-w-md w-full px-0">
           <div key={`${activeQ.category}-${activeQ.key}`} className="animate-slide-up">

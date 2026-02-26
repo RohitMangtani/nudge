@@ -221,7 +221,7 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
             ))}
           </div>
 
-          {/* Cards — big, spacious, one at a time feel */}
+          {/* Cards */}
           <div className="animate-fade-in-delay-2">
             {filteredList.length === 0 && (
               <div className="text-center py-32">
@@ -275,7 +275,7 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
                       )}
                     </div>
 
-                    {/* Title — big and clear */}
+                    {/* Title */}
                     <p className={`text-[20px] font-semibold leading-snug ${reminder.completed ? 'line-through text-ink-muted' : ''}`}>
                       {reminder.title}
                     </p>
@@ -291,7 +291,7 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
                     )}
                   </div>
 
-                  {/* Actions — big tappable split buttons */}
+                  {/* Actions */}
                   {!reminder.completed && (
                     <div className="flex border-t border-border">
                       <button

@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* Creamsicle — warm, light, inviting */
+  /* Creamsicle palette */
   --color-void: #FFFFFF;
   --color-dark: #FFFBF7;
   --color-surface: #F5F0EB;

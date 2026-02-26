@@ -60,7 +60,7 @@ export default function LandingPage() {
             <span className="text-mint">on autopilot.</span>
           </h1>
           <p className="text-ink-muted text-[18px] leading-[1.65] max-w-[380px]">
-            Oil changes, doctor visits, passport renewals — nudge remembers so you don&apos;t have to.
+            Oil changes, doctor visits, passport renewals. Nudge remembers so you don&apos;t have to.
           </p>
         </div>
       </div>

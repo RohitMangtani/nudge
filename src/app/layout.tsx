@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Nudge — Life maintenance on autopilot',
-  description: 'Never forget the things that matter. Nudge reminds you about life\'s maintenance — health, car, home, finances — so you don\'t have to remember.',
+  title: 'Nudge - Life maintenance on autopilot',
+  description: 'Never forget the things that matter. Nudge reminds you about life maintenance like health, car, home, and finances so you don\'t have to remember.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
