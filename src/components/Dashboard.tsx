@@ -17,8 +17,8 @@ interface Reminder {
 }
 
 /* SVG category icons */
-function CatIcon({ id, size = 18 }: { id: string; size?: number }) {
-  const props = { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
+function CatIcon({ id, size = 20 }: { id: string; size?: number }) {
+  const props = { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
   switch (id) {
     case 'health':
       return <svg {...props}><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>;
@@ -53,18 +53,20 @@ function daysUntil(dateStr: string): number {
   return Math.ceil((due.getTime() - today.getTime()) / 86_400_000);
 }
 
-function urgencyText(days: number): string {
-  if (days < 0) return `${Math.abs(days)}d overdue`;
-  if (days === 0) return 'Today';
+function friendlyDue(days: number): string {
+  if (days < -1) return `${Math.abs(days)} days late`;
+  if (days === -1) return 'Yesterday';
+  if (days === 0) return 'Due today';
   if (days === 1) return 'Tomorrow';
-  return `${days}d`;
+  if (days <= 7) return `In ${days} days`;
+  return `In ${days} days`;
 }
 
-function urgencyColor(days: number): string {
-  if (days < 0) return 'text-danger';
-  if (days <= 1) return 'text-mint';
-  if (days <= 7) return 'text-warn';
-  return 'text-ink-muted';
+function dueBadgeStyle(days: number): string {
+  if (days < 0) return 'bg-danger/10 text-danger';
+  if (days <= 1) return 'bg-mint/12 text-mint';
+  if (days <= 7) return 'bg-warn/10 text-warn';
+  return 'bg-surface text-ink-muted';
 }
 
 export default function NudgeDashboard({ userName }: { userName: string }) {
@@ -127,10 +129,6 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
   const completed = reminders.filter((r) => r.completed);
   const snoozed = reminders.filter((r) => !r.completed && r.snoozed_until && r.snoozed_until > today);
 
-  const overdue = active.filter((r) => daysUntil(r.due_date) < 0);
-  const thisWeek = active.filter((r) => { const d = daysUntil(r.due_date); return d >= 0 && d <= 7; });
-  const later = active.filter((r) => daysUntil(r.due_date) > 7);
-
   const filteredList = filter === 'active' ? active : filter === 'done' ? completed : snoozed;
   const firstName = userName.split(' ')[0];
   const hour = new Date().getHours();
@@ -143,10 +141,7 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
         <div className="max-w-lg mx-auto">
           <div className="h-5 w-28 animate-shimmer rounded-lg mb-3" />
           <div className="h-9 w-44 animate-shimmer rounded-lg mb-14" />
-          <div className="grid grid-cols-3 gap-4 mb-12">
-            {[1, 2, 3].map((i) => <div key={i} className="h-24 animate-shimmer rounded-2xl" />)}
-          </div>
-          {[1, 2, 3].map((i) => <div key={i} className="h-32 animate-shimmer rounded-2xl mb-4" />)}
+          {[1, 2, 3].map((i) => <div key={i} className="h-44 animate-shimmer rounded-3xl mb-5" />)}
         </div>
       </main>
     );
@@ -158,11 +153,10 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
       {menuOpen && (
         <div className="fixed inset-0 z-[999]">
           <div
-            className="absolute inset-0 bg-black/60"
+            className="absolute inset-0 bg-black/40"
             onClick={() => setMenuOpen(false)}
           />
           <div className="absolute bottom-0 left-0 right-0 bg-elevated rounded-t-3xl p-8 pb-12 safe-area-bottom animate-slide-up">
-            {/* Back arrow + title */}
             <div className="flex items-center gap-4 mb-10">
               <button
                 onClick={() => setMenuOpen(false)}
@@ -181,7 +175,6 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /></svg>
                 Edit answers
               </button>
-
               <button
                 onClick={handleReset}
                 disabled={resetting}
@@ -190,7 +183,6 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>
                 {resetting ? 'Resetting...' : 'Start over'}
               </button>
-
               <button
                 onClick={handleSignOut}
                 className="flex items-center gap-4 w-full px-6 py-5 rounded-2xl bg-surface hover:bg-surface-hover text-[16px] font-medium text-ink-muted cursor-pointer active:scale-[0.98] transition-all"
@@ -207,7 +199,7 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
         <div className="max-w-lg mx-auto">
 
           {/* Header */}
-          <div className="flex items-center justify-between mb-14 animate-fade-in">
+          <div className="flex items-center justify-between mb-10 animate-fade-in">
             <div>
               <p className="text-[15px] text-ink-muted mb-1">{greeting}</p>
               <h1 className="text-[32px] font-bold tracking-tight">{firstName}</h1>
@@ -220,28 +212,10 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
             </button>
           </div>
 
-          {/* Summary cards */}
-          <div className="grid grid-cols-3 gap-4 mb-14 animate-fade-in-delay">
-            <div className={`p-5 rounded-2xl transition-all ${overdue.length > 0 ? 'bg-danger-dim' : 'bg-surface'}`}>
-              <div className={`text-[28px] font-bold ${overdue.length > 0 ? 'text-danger' : 'text-ink'}`}>
-                {overdue.length}
-              </div>
-              <div className="text-[14px] text-ink-muted mt-2">Overdue</div>
-            </div>
-            <div className="p-5 rounded-2xl bg-mint-dim">
-              <div className="text-[28px] font-bold text-mint">{thisWeek.length}</div>
-              <div className="text-[14px] text-ink-muted mt-2">This week</div>
-            </div>
-            <div className="p-5 rounded-2xl bg-surface">
-              <div className="text-[28px] font-bold">{later.length}</div>
-              <div className="text-[14px] text-ink-muted mt-2">Later</div>
-            </div>
-          </div>
-
           {/* Filter tabs */}
-          <div className="flex gap-3 mb-10 overflow-x-auto no-scrollbar animate-fade-in-delay-2">
+          <div className="flex gap-3 mb-8 overflow-x-auto no-scrollbar animate-fade-in-delay">
             {[
-              { key: 'active', label: 'Active', count: active.length },
+              { key: 'active', label: 'Upcoming', count: active.length },
               { key: 'snoozed', label: 'Snoozed', count: snoozed.length },
               { key: 'done', label: 'Done', count: completed.length },
             ].map((f) => (
@@ -259,25 +233,32 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
             ))}
           </div>
 
-          {/* Reminder list */}
-          <div className="space-y-4 animate-fade-in-delay-3">
+          {/* Cards */}
+          <div className="space-y-5 animate-fade-in-delay-2">
             {filteredList.length === 0 && (
               <div className="text-center py-28">
-                <div className="w-16 h-16 rounded-2xl bg-surface mx-auto mb-6 flex items-center justify-center text-ink-subtle">
+                <div className="w-16 h-16 rounded-3xl bg-surface mx-auto mb-6 flex items-center justify-center text-ink-subtle">
                   {filter === 'active' ? (
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                   ) : filter === 'done' ? (
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="16 12 12 8 8 12" /><line x1="12" y1="16" x2="12" y2="8" /></svg>
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="16 12 12 8 8 12" /><line x1="12" y1="16" x2="12" y2="8" /></svg>
                   ) : (
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M1 1l22 22" /></svg>
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M1 1l22 22" /></svg>
                   )}
                 </div>
-                <p className="text-ink-muted text-[16px]">
+                <p className="text-ink-muted text-[17px] font-medium">
                   {filter === 'active'
-                    ? 'All clear — nothing due right now.'
+                    ? 'You\'re all caught up!'
                     : filter === 'done'
-                    ? 'Nothing completed yet.'
-                    : 'No snoozed reminders.'}
+                    ? 'Nothing done yet'
+                    : 'Nothing snoozed'}
+                </p>
+                <p className="text-ink-subtle text-[15px] mt-2">
+                  {filter === 'active'
+                    ? 'Nothing coming up right now.'
+                    : filter === 'done'
+                    ? 'Completed reminders show up here.'
+                    : 'Snoozed reminders will appear here.'}
                 </p>
               </div>
             )}
@@ -285,61 +266,74 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
             {filteredList.map((reminder) => {
               const days = daysUntil(reminder.due_date);
               const cat = CAT_META[reminder.category] || { label: reminder.category };
-              const dateLabel = new Date(reminder.due_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+              const dateLabel = new Date(reminder.due_date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 
               return (
                 <div
                   key={reminder.id}
-                  className={`p-6 rounded-2xl transition-all ${
+                  className={`rounded-3xl transition-all ${
                     reminder.completed
-                      ? 'bg-surface opacity-40'
-                      : days < 0
-                      ? 'bg-danger-dim'
-                      : 'bg-surface hover:bg-surface-hover'
+                      ? 'bg-surface/60 opacity-50'
+                      : 'bg-elevated border border-border'
                   }`}
                 >
-                  {/* Top row: category + urgency */}
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-[14px] text-ink-muted flex items-center gap-2">
-                      <CatIcon id={reminder.category} />
-                      {cat.label}
-                      {reminder.recurring && (
-                        <span className="text-ink-subtle ml-1">· {reminder.recurrence_label}</span>
+                  {/* Card header */}
+                  <div className="px-7 pt-7 pb-5">
+                    <div className="flex items-start justify-between mb-5">
+                      {/* Category badge */}
+                      <div className="flex items-center gap-3">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                          days < 0 ? 'bg-danger/10 text-danger' : 'bg-mint/12 text-mint'
+                        }`}>
+                          <CatIcon id={reminder.category} />
+                        </div>
+                        <div>
+                          <span className="text-[13px] text-ink-muted font-medium">{cat.label}</span>
+                          {reminder.recurring && (
+                            <span className="text-[12px] text-ink-subtle ml-2">{reminder.recurrence_label}</span>
+                          )}
+                        </div>
+                      </div>
+                      {/* Due badge */}
+                      {!reminder.completed && (
+                        <span className={`text-[13px] font-semibold px-3.5 py-1.5 rounded-full ${dueBadgeStyle(days)}`}>
+                          {friendlyDue(days)}
+                        </span>
                       )}
-                    </span>
-                    <span className={`text-[14px] font-semibold ${urgencyColor(days)}`}>
-                      {urgencyText(days)}
-                    </span>
+                    </div>
+
+                    {/* Title */}
+                    <p className={`text-[18px] font-semibold leading-snug ${reminder.completed ? 'line-through text-ink-muted' : ''}`}>
+                      {reminder.title}
+                    </p>
+
+                    {/* Description */}
+                    {reminder.description && (
+                      <p className="text-[15px] text-ink-muted mt-2.5 leading-relaxed">{reminder.description}</p>
+                    )}
+
+                    {/* Date */}
+                    {!reminder.completed && (
+                      <p className="text-[14px] text-ink-subtle mt-4">{dateLabel}</p>
+                    )}
                   </div>
 
-                  {/* Title */}
-                  <p className={`text-[17px] font-semibold leading-snug ${reminder.completed ? 'line-through text-ink-muted' : ''}`}>
-                    {reminder.title}
-                  </p>
-
-                  {/* Description */}
-                  {reminder.description && (
-                    <p className="text-[15px] text-ink-muted mt-2 leading-relaxed">{reminder.description}</p>
-                  )}
-
-                  {/* Date + action buttons */}
+                  {/* Action bar */}
                   {!reminder.completed && (
-                    <div className="flex items-center justify-between mt-5 gap-4">
-                      <span className="text-[14px] text-ink-subtle flex-shrink-0">{dateLabel}</span>
-                      <div className="flex gap-3">
-                        <button
-                          onClick={() => markDone(reminder.id)}
-                          className="text-[15px] font-semibold px-7 py-3 rounded-full bg-mint-soft text-mint hover:bg-mint/25 cursor-pointer transition-all active:scale-95"
-                        >
-                          Done
-                        </button>
-                        <button
-                          onClick={() => snooze(reminder.id)}
-                          className="text-[15px] font-semibold px-7 py-3 rounded-full bg-elevated text-ink-muted hover:text-ink-secondary cursor-pointer transition-all active:scale-95"
-                        >
-                          Snooze
-                        </button>
-                      </div>
+                    <div className="flex border-t border-border">
+                      <button
+                        onClick={() => markDone(reminder.id)}
+                        className="flex-1 py-4 text-[15px] font-semibold text-mint cursor-pointer transition-all active:bg-mint/5 rounded-bl-3xl"
+                      >
+                        Done
+                      </button>
+                      <div className="w-px bg-border" />
+                      <button
+                        onClick={() => snooze(reminder.id)}
+                        className="flex-1 py-4 text-[15px] font-semibold text-ink-muted cursor-pointer transition-all active:bg-surface rounded-br-3xl"
+                      >
+                        Snooze
+                      </button>
                     </div>
                   )}
                 </div>
