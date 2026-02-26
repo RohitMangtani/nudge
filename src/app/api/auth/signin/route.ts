@@ -7,31 +7,39 @@ export async function POST(req: NextRequest) {
   const { idToken } = await req.json();
   if (!idToken) return NextResponse.json({ error: 'Missing token' }, { status: 400 });
 
-  const decoded = await verifyIdToken(idToken);
-  const supabase = getServerSupabase();
+  try {
+    const decoded = await verifyIdToken(idToken);
+    const supabase = getServerSupabase();
 
-  const { data: existing } = await supabase
-    .from('nudge_users')
-    .select('*')
-    .eq('firebase_uid', decoded.uid)
-    .single();
-
-  let user = existing;
-  if (!user) {
-    const { data: newUser } = await supabase
+    let { data: user } = await supabase
       .from('nudge_users')
-      .insert({
-        email: decoded.email || '',
-        name: decoded.name || 'Friend',
-        firebase_uid: decoded.uid,
-      })
-      .select()
+      .select('*')
+      .eq('firebase_uid', decoded.uid)
       .single();
-    user = newUser;
-  }
 
-  const res = NextResponse.json({ user });
-  const opts = getTokenCookieOptions();
-  res.cookies.set(opts.name, idToken, opts);
-  return res;
+    if (!user) {
+      const { data: newUser, error } = await supabase
+        .from('nudge_users')
+        .insert({
+          email: decoded.email || '',
+          name: decoded.name || 'Friend',
+          firebase_uid: decoded.uid,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+      user = newUser;
+    }
+
+    const res = NextResponse.json({ user });
+    const opts = getTokenCookieOptions();
+    res.cookies.set(opts.name, idToken, opts);
+    return res;
+  } catch (err) {
+    console.error('Auth error:', err);
+    return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+  }
 }
