@@ -35,50 +35,45 @@ function CatIcon({ id, size = 24 }: { id: string; size?: number }) {
 }
 
 const CATEGORIES = [
-  { id: 'health', label: 'Health', desc: 'Checkups, dentist, prescriptions' },
-  { id: 'car', label: 'Car', desc: 'Oil changes, registration, tires' },
-  { id: 'home', label: 'Home', desc: 'Lease, filters, deep cleaning' },
-  { id: 'finance', label: 'Finance', desc: 'Credit score, taxes, subscriptions' },
+  { id: 'health', label: 'Health', desc: 'Doctor, dentist, eyes, meds' },
+  { id: 'car', label: 'Car', desc: 'Oil, tires, registration' },
+  { id: 'home', label: 'Home', desc: 'Lease, filters, cleaning' },
+  { id: 'finance', label: 'Finance', desc: 'Credit, taxes, subscriptions' },
   { id: 'personal', label: 'Personal', desc: 'License, passport, haircuts' },
-  { id: 'pets', label: 'Pets', desc: 'Vet visits, medication, grooming' },
+  { id: 'pets', label: 'Pets', desc: 'Vet, meds, grooming' },
 ];
 
 const QUESTIONS: Record<string, Question[]> = {
   health: [
-    { category: 'health', key: 'last_checkup', text: 'When was your last doctor checkup?', type: 'choice', options: ['Less than 6 months', '6-12 months', '1-2 years', '2+ years', "Don't remember"] },
-    { category: 'health', key: 'last_dentist', text: 'Last dentist visit?', type: 'choice', options: ['Less than 6 months', '6-12 months', '1-2 years', '2+ years', "Don't remember"] },
-    { category: 'health', key: 'wears_glasses', text: 'Do you wear contacts or glasses?', type: 'yesno', followUp: { category: 'health', key: 'last_eye_exam', text: 'When was your last eye exam?', type: 'choice', options: ['Less than 1 year', '1-2 years', '2+ years', "Don't remember"] } },
-    { category: 'health', key: 'takes_prescriptions', text: 'Any regular prescriptions?', type: 'yesno', followUp: { category: 'health', key: 'prescription_refill', text: 'How often do you refill?', type: 'choice', options: ['Monthly', 'Every 3 months', 'Every 6 months', 'Yearly'] } },
+    { category: 'health', key: 'last_checkup', text: 'Last time you saw a doctor?', type: 'choice', options: ['Recently', 'This year', 'Over a year ago', 'No clue'] },
+    { category: 'health', key: 'last_dentist', text: 'How about the dentist?', type: 'choice', options: ['Recently', 'This year', 'Over a year ago', 'No clue'] },
+    { category: 'health', key: 'wears_glasses', text: 'Glasses or contacts?', type: 'yesno', followUp: { category: 'health', key: 'last_eye_exam', text: 'Last eye exam?', type: 'choice', options: ['This year', 'A while ago', 'No clue'] } },
+    { category: 'health', key: 'takes_prescriptions', text: 'On any regular meds?', type: 'yesno', followUp: { category: 'health', key: 'prescription_refill', text: 'How often do you refill?', type: 'choice', options: ['Monthly', 'Every few months', 'Twice a year', 'Yearly'] } },
   ],
   car: [
-    { category: 'car', key: 'car_mileage', text: 'Roughly how many miles on your car?', type: 'input', placeholder: 'e.g. 45000' },
-    { category: 'car', key: 'last_oil_change', text: 'When was your last oil change?', type: 'choice', options: ['Less than 3 months', '3-6 months', '6+ months', "Don't remember"] },
-    { category: 'car', key: 'registration_month', text: 'What month does your registration expire?', type: 'choice', options: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', "Don't know"] },
-    { category: 'car', key: 'last_tire_rotation', text: 'Last tire rotation?', type: 'choice', options: ['Less than 6 months', '6-12 months', '1+ year', "Don't remember", 'Never'] },
+    { category: 'car', key: 'car_mileage', text: 'Ballpark miles on your car?', type: 'input', placeholder: 'e.g. 45k' },
+    { category: 'car', key: 'last_oil_change', text: 'Last oil change?', type: 'choice', options: ['Pretty recent', 'A few months ago', 'It\'s been a while', 'No idea'] },
+    { category: 'car', key: 'registration_month', text: 'When does registration expire?', type: 'input', placeholder: 'e.g. March' },
   ],
   home: [
-    { category: 'home', key: 'rent_or_own', text: 'Do you rent or own?', type: 'choice', options: ['Rent', 'Own', 'Live with family'] },
-    { category: 'home', key: 'lease_end', text: 'When does your lease end?', type: 'input', placeholder: 'e.g. September 2026' },
-    { category: 'home', key: 'last_air_filter', text: 'When did you last change the air filter?', type: 'choice', options: ['Less than 3 months', '3-6 months', '6+ months', "Don't remember", "Don't have one"] },
-    { category: 'home', key: 'last_deep_clean', text: 'Last time you did a deep clean?', type: 'choice', options: ['This month', '1-3 months', '3-6 months', '6+ months', "Don't remember"] },
+    { category: 'home', key: 'rent_or_own', text: 'What\'s your living situation?', type: 'choice', options: ['Renting', 'Own it', 'Living with family'] },
+    { category: 'home', key: 'lease_end', text: 'When\'s your lease up?', type: 'input', placeholder: 'e.g. Sep 2026' },
+    { category: 'home', key: 'last_deep_clean', text: 'Last real deep clean?', type: 'choice', options: ['This month', 'A couple months', 'It\'s been a while', 'No comment'] },
   ],
   finance: [
-    { category: 'finance', key: 'last_credit_check', text: 'When did you last check your credit score?', type: 'choice', options: ['This month', '1-3 months', '3-6 months', '6+ months', 'Never', "Don't remember"] },
-    { category: 'finance', key: 'tax_prep', text: 'Do you file taxes yourself or use someone?', type: 'choice', options: ['File myself', 'Use an accountant', 'Parents handle it', 'Not sure yet'] },
-    { category: 'finance', key: 'subscription_audit', text: 'When did you last check for unused subscriptions?', type: 'choice', options: ['Recently', '3-6 months', '6+ months', 'Never'] },
-    { category: 'finance', key: 'insurance_review', text: 'When did you last review your insurance?', type: 'choice', options: ['This year', '1-2 years', '2+ years', 'Never', "Don't have any"] },
+    { category: 'finance', key: 'last_credit_check', text: 'Checked your credit lately?', type: 'choice', options: ['Yep, recently', 'A few months ago', 'It\'s been a while', 'Never have'] },
+    { category: 'finance', key: 'tax_prep', text: 'How do you handle taxes?', type: 'choice', options: ['Do it myself', 'Accountant', 'Parents handle it', 'TBD'] },
+    { category: 'finance', key: 'subscription_audit', text: 'Any subscriptions you forgot about?', type: 'choice', options: ['Nah, I\'m on top of it', 'Probably a few', 'Definitely', 'Never checked'] },
   ],
   personal: [
-    { category: 'personal', key: 'license_expiry', text: 'When does your driver\'s license expire?', type: 'input', placeholder: 'e.g. 2028' },
-    { category: 'personal', key: 'has_passport', text: 'Do you have a passport?', type: 'yesno', followUp: { category: 'personal', key: 'passport_expiry', text: 'When does it expire?', type: 'input', placeholder: 'e.g. 2029' } },
-    { category: 'personal', key: 'haircut_frequency', text: 'How often do you get a haircut?', type: 'choice', options: ['Every 4 weeks', 'Every 6-8 weeks', 'Every few months', 'Rarely'] },
-    { category: 'personal', key: 'last_flu_shot', text: 'When was your last flu shot?', type: 'choice', options: ['This season', 'Last year', '2+ years', 'Never'] },
+    { category: 'personal', key: 'license_expiry', text: 'License expire anytime soon?', type: 'input', placeholder: 'e.g. 2028' },
+    { category: 'personal', key: 'has_passport', text: 'Got a passport?', type: 'yesno', followUp: { category: 'personal', key: 'passport_expiry', text: 'When does it expire?', type: 'input', placeholder: 'e.g. 2029' } },
+    { category: 'personal', key: 'haircut_frequency', text: 'How often do you get a trim?', type: 'choice', options: ['Every month', 'Every couple months', 'When it gets bad', 'Rarely'] },
   ],
   pets: [
-    { category: 'pets', key: 'pet_type', text: 'What kind of pet do you have?', type: 'choice', options: ['Dog', 'Cat', 'Both', 'Other'] },
-    { category: 'pets', key: 'last_vet_visit', text: 'When was their last vet visit?', type: 'choice', options: ['Less than 6 months', '6-12 months', '1+ year', "Don't remember"] },
-    { category: 'pets', key: 'pet_medication', text: 'Are they on any regular medication?', type: 'yesno', followUp: { category: 'pets', key: 'pet_med_refill', text: 'How often do you refill it?', type: 'choice', options: ['Monthly', 'Every 3 months', 'Every 6 months'] } },
-    { category: 'pets', key: 'pet_grooming', text: 'Do they need regular grooming?', type: 'yesno', followUp: { category: 'pets', key: 'grooming_frequency', text: 'How often?', type: 'choice', options: ['Every 4 weeks', 'Every 6-8 weeks', 'Every few months'] } },
+    { category: 'pets', key: 'pet_type', text: 'Got a furry friend?', type: 'choice', options: ['Dog', 'Cat', 'Both', 'Other'] },
+    { category: 'pets', key: 'last_vet_visit', text: 'Last vet trip?', type: 'choice', options: ['Recently', 'This year', 'Over a year ago', 'No clue'] },
+    { category: 'pets', key: 'pet_medication', text: 'Are they on any meds?', type: 'yesno', followUp: { category: 'pets', key: 'pet_med_refill', text: 'How often do you refill?', type: 'choice', options: ['Monthly', 'Every few months', 'Twice a year'] } },
   ],
 };
 
