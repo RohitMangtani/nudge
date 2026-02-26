@@ -13,13 +13,34 @@ interface Question {
   followUp?: Question;
 }
 
+/* SVG icons for each category */
+function CatIcon({ id, size = 24 }: { id: string; size?: number }) {
+  const props = { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
+  switch (id) {
+    case 'health':
+      return <svg {...props}><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>;
+    case 'car':
+      return <svg {...props}><circle cx="7" cy="17" r="2" /><circle cx="17" cy="17" r="2" /><path d="M5 17H3v-4l2-5h10l2 5h2v4h-2" /><path d="M5 12h14" /></svg>;
+    case 'home':
+      return <svg {...props}><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>;
+    case 'finance':
+      return <svg {...props}><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>;
+    case 'personal':
+      return <svg {...props}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>;
+    case 'pets':
+      return <svg {...props}><circle cx="11" cy="4" r="2" /><circle cx="18" cy="8" r="2" /><circle cx="20" cy="16" r="2" /><path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z" /></svg>;
+    default:
+      return <svg {...props}><circle cx="12" cy="12" r="10" /></svg>;
+  }
+}
+
 const CATEGORIES = [
-  { id: 'health', label: 'Health', icon: '🩺', desc: 'Checkups, dentist, prescriptions' },
-  { id: 'car', label: 'Car', icon: '🚗', desc: 'Oil changes, registration, tires' },
-  { id: 'home', label: 'Home', icon: '🏠', desc: 'Lease, filters, deep cleaning' },
-  { id: 'finance', label: 'Finance', icon: '💰', desc: 'Credit score, taxes, subscriptions' },
-  { id: 'personal', label: 'Personal', icon: '🪪', desc: 'License, passport, haircuts' },
-  { id: 'pets', label: 'Pets', icon: '🐾', desc: 'Vet visits, medication, grooming' },
+  { id: 'health', label: 'Health', desc: 'Checkups, dentist, prescriptions' },
+  { id: 'car', label: 'Car', desc: 'Oil changes, registration, tires' },
+  { id: 'home', label: 'Home', desc: 'Lease, filters, deep cleaning' },
+  { id: 'finance', label: 'Finance', desc: 'Credit score, taxes, subscriptions' },
+  { id: 'personal', label: 'Personal', desc: 'License, passport, haircuts' },
+  { id: 'pets', label: 'Pets', desc: 'Vet visits, medication, grooming' },
 ];
 
 const QUESTIONS: Record<string, Question[]> = {
@@ -136,34 +157,36 @@ export default function OnboardingFlow() {
     router.refresh();
   };
 
-  // Phase 1: Categories
+  /* Phase 1: Category selection */
   if (phase === 'categories') {
     return (
       <main className="min-h-screen flex items-center justify-center px-6 py-16">
-        <div className="max-w-sm w-full animate-fade-in">
-          <h1 className="text-[28px] font-bold tracking-tight leading-tight mb-2">
+        <div className="max-w-md w-full animate-fade-in">
+          <h1 className="text-[32px] font-bold tracking-tight leading-tight mb-4">
             What should we track?
           </h1>
-          <p className="text-ink-muted text-[14px] mb-10">
+          <p className="text-ink-muted text-[16px] mb-14">
             Pick the areas that matter to you.
           </p>
 
-          <div className="grid grid-cols-2 gap-3 mb-10">
+          <div className="grid grid-cols-2 gap-4 mb-14">
             {CATEGORIES.map((cat) => {
               const selected = selectedCats.includes(cat.id);
               return (
                 <button
                   key={cat.id}
                   onClick={() => toggleCat(cat.id)}
-                  className={`text-left p-5 rounded-2xl cursor-pointer transition-all ${
+                  className={`text-left p-6 rounded-2xl cursor-pointer transition-all active:scale-[0.97] ${
                     selected
                       ? 'bg-mint-glow ring-[1.5px] ring-mint'
                       : 'bg-surface hover:bg-surface-hover'
                   }`}
                 >
-                  <div className="text-[22px] mb-2">{cat.icon}</div>
-                  <div className="text-[14px] font-semibold mb-0.5">{cat.label}</div>
-                  <div className="text-[12px] text-ink-muted leading-snug">{cat.desc}</div>
+                  <div className={`mb-4 ${selected ? 'text-mint' : 'text-ink-muted'}`}>
+                    <CatIcon id={cat.id} />
+                  </div>
+                  <div className="text-[16px] font-semibold mb-1">{cat.label}</div>
+                  <div className="text-[14px] text-ink-muted leading-snug">{cat.desc}</div>
                 </button>
               );
             })}
@@ -172,7 +195,7 @@ export default function OnboardingFlow() {
           <button
             onClick={() => setPhase('questions')}
             disabled={selectedCats.length === 0}
-            className="w-full h-[52px] bg-mint hover:bg-mint-hover text-black font-semibold rounded-full text-[15px] cursor-pointer transition-all disabled:opacity-20 active:scale-[0.98]"
+            className="w-full h-[58px] bg-mint hover:bg-mint-hover text-black font-semibold rounded-full text-[16px] cursor-pointer transition-all disabled:opacity-20 active:scale-[0.98]"
           >
             {selectedCats.length === 0
               ? 'Pick at least one'
@@ -183,41 +206,42 @@ export default function OnboardingFlow() {
     );
   }
 
-  // Phase 3: Generating
+  /* Phase 3: Generating */
   if (phase === 'generating' || generating) {
     return (
       <main className="min-h-screen flex items-center justify-center px-6">
         <div className="text-center animate-fade-in">
-          <div className="w-14 h-14 rounded-2xl bg-mint mx-auto mb-8 flex items-center justify-center animate-breathe">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <div className="w-16 h-16 rounded-2xl bg-mint mx-auto mb-10 flex items-center justify-center animate-breathe">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
               <path d="M13.73 21a2 2 0 0 1-3.46 0" />
             </svg>
           </div>
-          <p className="text-[18px] font-semibold mb-2">Building your reminders</p>
-          <p className="text-[14px] text-ink-muted">Just a few seconds...</p>
+          <p className="text-[20px] font-semibold mb-3">Building your reminders</p>
+          <p className="text-[16px] text-ink-muted">Just a few seconds...</p>
         </div>
       </main>
     );
   }
 
-  // Phase 2: Questions
+  /* Phase 2: Questions */
   if (!activeQ) return null;
 
   const catInfo = CATEGORIES.find((c) => c.id === currentCat);
 
   return (
     <main className="min-h-screen flex items-center justify-center px-6 py-16">
-      <div className="max-w-sm w-full">
+      <div className="max-w-md w-full">
         {/* Progress */}
-        <div className="mb-10">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-[13px] text-ink-muted font-medium">
-              {catInfo?.icon} {catInfo?.label}
+        <div className="mb-14">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[15px] text-ink-muted font-medium flex items-center gap-2">
+              <span className="text-mint"><CatIcon id={currentCat} size={18} /></span>
+              {catInfo?.label}
             </span>
-            <span className="text-[12px] text-ink-subtle">{Math.round(progress)}%</span>
+            <span className="text-[14px] text-ink-subtle">{Math.round(progress)}%</span>
           </div>
-          <div className="h-[3px] bg-surface rounded-full overflow-hidden">
+          <div className="h-1 bg-surface rounded-full overflow-hidden">
             <div
               className="h-full bg-mint rounded-full transition-all duration-500 ease-out"
               style={{ width: `${progress}%` }}
@@ -227,17 +251,17 @@ export default function OnboardingFlow() {
 
         {/* Question */}
         <div key={`${activeQ.category}-${activeQ.key}`} className="animate-slide-up">
-          <h2 className="text-[22px] font-bold tracking-tight leading-tight mb-8">
+          <h2 className="text-[26px] font-bold tracking-tight leading-tight mb-12">
             {activeQ.text}
           </h2>
 
           {activeQ.type === 'choice' && (
-            <div className="space-y-2.5">
+            <div className="space-y-3">
               {activeQ.options?.map((opt) => (
                 <button
                   key={opt}
                   onClick={() => handleChoice(opt)}
-                  className="w-full text-left px-5 py-4 rounded-2xl bg-surface hover:bg-surface-hover text-[14px] cursor-pointer transition-all active:scale-[0.98]"
+                  className="w-full text-left px-6 py-5 rounded-2xl bg-surface hover:bg-surface-hover text-[16px] cursor-pointer transition-all active:scale-[0.98]"
                 >
                   {opt}
                 </button>
@@ -246,16 +270,16 @@ export default function OnboardingFlow() {
           )}
 
           {activeQ.type === 'yesno' && (
-            <div className="flex gap-3">
+            <div className="flex gap-4">
               <button
                 onClick={() => handleChoice('Yes')}
-                className="flex-1 py-4 rounded-2xl bg-surface hover:bg-surface-hover text-[14px] font-medium cursor-pointer transition-all active:scale-[0.98]"
+                className="flex-1 py-5 rounded-2xl bg-surface hover:bg-surface-hover text-[16px] font-medium cursor-pointer transition-all active:scale-[0.98]"
               >
                 Yes
               </button>
               <button
                 onClick={() => handleChoice('No')}
-                className="flex-1 py-4 rounded-2xl bg-surface hover:bg-surface-hover text-[14px] font-medium cursor-pointer transition-all active:scale-[0.98]"
+                className="flex-1 py-5 rounded-2xl bg-surface hover:bg-surface-hover text-[16px] font-medium cursor-pointer transition-all active:scale-[0.98]"
               >
                 No
               </button>
@@ -263,19 +287,19 @@ export default function OnboardingFlow() {
           )}
 
           {activeQ.type === 'input' && (
-            <div className="flex gap-3">
+            <div className="flex gap-4">
               <input
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleInput()}
                 placeholder={activeQ.placeholder}
-                className="flex-1 px-5 py-4 rounded-2xl bg-surface text-ink text-[14px] focus:outline-none focus:ring-[1.5px] focus:ring-mint/50 transition-all placeholder:text-ink-subtle"
+                className="flex-1 px-6 py-5 rounded-2xl bg-surface text-ink text-[16px] focus:outline-none focus:ring-[1.5px] focus:ring-mint/50 transition-all placeholder:text-ink-subtle"
                 autoFocus
               />
               <button
                 onClick={handleInput}
                 disabled={!inputValue.trim()}
-                className="px-7 py-4 rounded-2xl bg-mint text-black font-semibold text-[14px] cursor-pointer transition-all hover:bg-mint-hover disabled:opacity-20 active:scale-[0.98]"
+                className="px-8 py-5 rounded-2xl bg-mint text-black font-semibold text-[16px] cursor-pointer transition-all hover:bg-mint-hover disabled:opacity-20 active:scale-[0.98]"
               >
                 Next
               </button>
@@ -286,9 +310,9 @@ export default function OnboardingFlow() {
         {/* Skip */}
         <button
           onClick={advance}
-          className="mt-8 text-[13px] text-ink-subtle hover:text-ink-muted cursor-pointer transition-all"
+          className="mt-12 text-[15px] text-ink-subtle hover:text-ink-muted cursor-pointer transition-all"
         >
-          Skip
+          Skip this question
         </button>
       </div>
     </main>

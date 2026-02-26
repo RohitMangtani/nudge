@@ -16,13 +16,34 @@ interface Reminder {
   snoozed_until: string | null;
 }
 
-const CAT_META: Record<string, { icon: string; label: string }> = {
-  health: { icon: '🩺', label: 'Health' },
-  car: { icon: '🚗', label: 'Car' },
-  home: { icon: '🏠', label: 'Home' },
-  finance: { icon: '💰', label: 'Finance' },
-  personal: { icon: '🪪', label: 'Personal' },
-  pets: { icon: '🐾', label: 'Pets' },
+/* SVG category icons */
+function CatIcon({ id, size = 18 }: { id: string; size?: number }) {
+  const props = { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
+  switch (id) {
+    case 'health':
+      return <svg {...props}><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>;
+    case 'car':
+      return <svg {...props}><circle cx="7" cy="17" r="2" /><circle cx="17" cy="17" r="2" /><path d="M5 17H3v-4l2-5h10l2 5h2v4h-2" /><path d="M5 12h14" /></svg>;
+    case 'home':
+      return <svg {...props}><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>;
+    case 'finance':
+      return <svg {...props}><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>;
+    case 'personal':
+      return <svg {...props}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>;
+    case 'pets':
+      return <svg {...props}><circle cx="11" cy="4" r="2" /><circle cx="18" cy="8" r="2" /><circle cx="20" cy="16" r="2" /><path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z" /></svg>;
+    default:
+      return <svg {...props}><circle cx="12" cy="12" r="10" /></svg>;
+  }
+}
+
+const CAT_META: Record<string, { label: string }> = {
+  health: { label: 'Health' },
+  car: { label: 'Car' },
+  home: { label: 'Home' },
+  finance: { label: 'Finance' },
+  personal: { label: 'Personal' },
+  pets: { label: 'Pets' },
 };
 
 function daysUntil(dateStr: string): number {
@@ -105,17 +126,17 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
 
-  // Loading skeleton
+  /* Loading skeleton */
   if (loading) {
     return (
-      <main className="min-h-screen px-5 py-10">
-        <div className="max-w-md mx-auto">
-          <div className="h-6 w-32 animate-shimmer rounded-lg mb-2" />
-          <div className="h-8 w-48 animate-shimmer rounded-lg mb-10" />
-          <div className="grid grid-cols-3 gap-3 mb-8">
-            {[1, 2, 3].map((i) => <div key={i} className="h-20 animate-shimmer rounded-2xl" />)}
+      <main className="min-h-screen px-6 py-14">
+        <div className="max-w-lg mx-auto">
+          <div className="h-5 w-28 animate-shimmer rounded-lg mb-3" />
+          <div className="h-9 w-44 animate-shimmer rounded-lg mb-14" />
+          <div className="grid grid-cols-3 gap-4 mb-12">
+            {[1, 2, 3].map((i) => <div key={i} className="h-24 animate-shimmer rounded-2xl" />)}
           </div>
-          {[1, 2, 3].map((i) => <div key={i} className="h-24 animate-shimmer rounded-2xl mb-3" />)}
+          {[1, 2, 3].map((i) => <div key={i} className="h-32 animate-shimmer rounded-2xl mb-4" />)}
         </div>
       </main>
     );
@@ -123,33 +144,31 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
 
   return (
     <>
-      {/* Menu overlay — rendered at root level to escape all stacking contexts */}
+      {/* Menu overlay */}
       {menuOpen && (
         <div className="fixed inset-0 z-[999]">
-          {/* Backdrop */}
           <div
             className="absolute inset-0 bg-black/60"
             onClick={() => setMenuOpen(false)}
           />
-          {/* Bottom sheet menu for mobile */}
-          <div className="absolute bottom-0 left-0 right-0 bg-elevated rounded-t-3xl p-6 pb-10 safe-area-bottom animate-slide-up">
-            <div className="w-10 h-1 bg-ink-subtle rounded-full mx-auto mb-6" />
+          <div className="absolute bottom-0 left-0 right-0 bg-elevated rounded-t-3xl p-8 pb-12 safe-area-bottom animate-slide-up">
+            <div className="w-10 h-1 bg-ink-subtle rounded-full mx-auto mb-8" />
             <button
               onClick={() => { setMenuOpen(false); router.push('/onboarding'); }}
-              className="block w-full text-left py-4 text-[16px] font-medium cursor-pointer active:opacity-60 transition-all"
+              className="block w-full text-left py-5 text-[17px] font-medium cursor-pointer active:opacity-60 transition-all"
             >
               Edit answers
             </button>
-            <div className="h-px bg-border my-1" />
+            <div className="h-px bg-border my-2" />
             <button
               onClick={handleSignOut}
-              className="block w-full text-left py-4 text-[16px] text-ink-muted cursor-pointer active:opacity-60 transition-all"
+              className="block w-full text-left py-5 text-[17px] text-ink-muted cursor-pointer active:opacity-60 transition-all"
             >
               Sign out
             </button>
             <button
               onClick={() => setMenuOpen(false)}
-              className="block w-full mt-4 py-3.5 text-center text-[15px] font-medium bg-surface rounded-2xl cursor-pointer active:scale-[0.98] transition-all"
+              className="block w-full mt-6 py-4 text-center text-[16px] font-semibold bg-surface rounded-2xl cursor-pointer active:scale-[0.98] transition-all"
             >
               Cancel
             </button>
@@ -157,43 +176,43 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
         </div>
       )}
 
-      <main className="min-h-screen px-5 py-10">
-        <div className="max-w-md mx-auto">
+      <main className="min-h-screen px-6 py-14">
+        <div className="max-w-lg mx-auto">
 
           {/* Header */}
-          <div className="flex items-center justify-between mb-10 animate-fade-in">
+          <div className="flex items-center justify-between mb-14 animate-fade-in">
             <div>
-              <p className="text-[13px] text-ink-muted mb-0.5">{greeting}</p>
-              <h1 className="text-[26px] font-bold tracking-tight">{firstName}</h1>
+              <p className="text-[15px] text-ink-muted mb-1">{greeting}</p>
+              <h1 className="text-[32px] font-bold tracking-tight">{firstName}</h1>
             </div>
             <button
               onClick={() => setMenuOpen(true)}
-              className="w-11 h-11 rounded-full bg-mint/15 flex items-center justify-center font-bold text-mint text-[14px] cursor-pointer hover:bg-mint/25 active:scale-95 transition-all"
+              className="w-12 h-12 rounded-full bg-mint/15 flex items-center justify-center font-bold text-mint text-[16px] cursor-pointer hover:bg-mint/25 active:scale-95 transition-all"
             >
               {firstName[0]?.toUpperCase()}
             </button>
           </div>
 
-          {/* Summary */}
-          <div className="grid grid-cols-3 gap-3 mb-10 animate-fade-in-delay">
-            <div className={`p-4 sm:p-5 rounded-2xl transition-all ${overdue.length > 0 ? 'bg-danger-dim' : 'bg-surface'}`}>
-              <div className={`text-[22px] sm:text-[24px] font-bold ${overdue.length > 0 ? 'text-danger' : 'text-ink'}`}>
+          {/* Summary cards */}
+          <div className="grid grid-cols-3 gap-4 mb-14 animate-fade-in-delay">
+            <div className={`p-5 rounded-2xl transition-all ${overdue.length > 0 ? 'bg-danger-dim' : 'bg-surface'}`}>
+              <div className={`text-[28px] font-bold ${overdue.length > 0 ? 'text-danger' : 'text-ink'}`}>
                 {overdue.length}
               </div>
-              <div className="text-[11px] sm:text-[12px] text-ink-muted mt-1">Overdue</div>
+              <div className="text-[14px] text-ink-muted mt-2">Overdue</div>
             </div>
-            <div className="p-4 sm:p-5 rounded-2xl bg-mint-dim">
-              <div className="text-[22px] sm:text-[24px] font-bold text-mint">{thisWeek.length}</div>
-              <div className="text-[11px] sm:text-[12px] text-ink-muted mt-1">This week</div>
+            <div className="p-5 rounded-2xl bg-mint-dim">
+              <div className="text-[28px] font-bold text-mint">{thisWeek.length}</div>
+              <div className="text-[14px] text-ink-muted mt-2">This week</div>
             </div>
-            <div className="p-4 sm:p-5 rounded-2xl bg-surface">
-              <div className="text-[22px] sm:text-[24px] font-bold">{later.length}</div>
-              <div className="text-[11px] sm:text-[12px] text-ink-muted mt-1">Later</div>
+            <div className="p-5 rounded-2xl bg-surface">
+              <div className="text-[28px] font-bold">{later.length}</div>
+              <div className="text-[14px] text-ink-muted mt-2">Later</div>
             </div>
           </div>
 
-          {/* Filters — horizontal scroll on tiny screens */}
-          <div className="flex gap-2 mb-8 overflow-x-auto no-scrollbar animate-fade-in-delay-2">
+          {/* Filter tabs */}
+          <div className="flex gap-3 mb-10 overflow-x-auto no-scrollbar animate-fade-in-delay-2">
             {[
               { key: 'active', label: 'Active', count: active.length },
               { key: 'snoozed', label: 'Snoozed', count: snoozed.length },
@@ -202,25 +221,31 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
               <button
                 key={f.key}
                 onClick={() => setFilter(f.key)}
-                className={`text-[13px] px-4 py-2.5 rounded-full cursor-pointer transition-all active:scale-95 whitespace-nowrap ${
+                className={`text-[15px] px-6 py-3 rounded-full cursor-pointer transition-all active:scale-95 whitespace-nowrap ${
                   filter === f.key
-                    ? 'bg-ink text-dark font-medium'
+                    ? 'bg-ink text-dark font-semibold'
                     : 'text-ink-muted hover:text-ink-secondary hover:bg-surface'
                 }`}
               >
-                {f.label} {f.count > 0 && <span className="ml-0.5 opacity-60">{f.count}</span>}
+                {f.label} {f.count > 0 && <span className="ml-1 opacity-60">{f.count}</span>}
               </button>
             ))}
           </div>
 
-          {/* Reminders */}
-          <div className="space-y-2 animate-fade-in-delay-3">
+          {/* Reminder list */}
+          <div className="space-y-4 animate-fade-in-delay-3">
             {filteredList.length === 0 && (
-              <div className="text-center py-20">
-                <div className="text-[32px] mb-4">
-                  {filter === 'active' ? '✨' : filter === 'done' ? '🎯' : '😴'}
+              <div className="text-center py-28">
+                <div className="w-16 h-16 rounded-2xl bg-surface mx-auto mb-6 flex items-center justify-center text-ink-subtle">
+                  {filter === 'active' ? (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                  ) : filter === 'done' ? (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="16 12 12 8 8 12" /><line x1="12" y1="16" x2="12" y2="8" /></svg>
+                  ) : (
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M1 1l22 22" /></svg>
+                  )}
                 </div>
-                <p className="text-ink-muted text-[14px]">
+                <p className="text-ink-muted text-[16px]">
                   {filter === 'active'
                     ? 'All clear — nothing due right now.'
                     : filter === 'done'
@@ -232,13 +257,13 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
 
             {filteredList.map((reminder) => {
               const days = daysUntil(reminder.due_date);
-              const cat = CAT_META[reminder.category] || { icon: '📌', label: reminder.category };
+              const cat = CAT_META[reminder.category] || { label: reminder.category };
               const dateLabel = new Date(reminder.due_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
               return (
                 <div
                   key={reminder.id}
-                  className={`p-5 rounded-2xl transition-all ${
+                  className={`p-6 rounded-2xl transition-all ${
                     reminder.completed
                       ? 'bg-surface opacity-40'
                       : days < 0
@@ -246,43 +271,44 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
                       : 'bg-surface hover:bg-surface-hover'
                   }`}
                 >
-                  {/* Top row */}
-                  <div className="flex items-center justify-between mb-2.5">
-                    <span className="text-[12px] text-ink-muted">
-                      {cat.icon} {cat.label}
+                  {/* Top row: category + urgency */}
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-[14px] text-ink-muted flex items-center gap-2">
+                      <CatIcon id={reminder.category} />
+                      {cat.label}
                       {reminder.recurring && (
-                        <span className="text-ink-subtle ml-2">↻ {reminder.recurrence_label}</span>
+                        <span className="text-ink-subtle ml-1">· {reminder.recurrence_label}</span>
                       )}
                     </span>
-                    <span className={`text-[12px] font-medium ${urgencyColor(days)}`}>
+                    <span className={`text-[14px] font-semibold ${urgencyColor(days)}`}>
                       {urgencyText(days)}
                     </span>
                   </div>
 
                   {/* Title */}
-                  <p className={`text-[15px] font-medium leading-snug ${reminder.completed ? 'line-through text-ink-muted' : ''}`}>
+                  <p className={`text-[17px] font-semibold leading-snug ${reminder.completed ? 'line-through text-ink-muted' : ''}`}>
                     {reminder.title}
                   </p>
 
                   {/* Description */}
                   {reminder.description && (
-                    <p className="text-[13px] text-ink-muted mt-1.5 leading-relaxed">{reminder.description}</p>
+                    <p className="text-[15px] text-ink-muted mt-2 leading-relaxed">{reminder.description}</p>
                   )}
 
-                  {/* Date + actions — stacked on very small screens for tap targets */}
+                  {/* Date + action buttons */}
                   {!reminder.completed && (
-                    <div className="flex items-center justify-between mt-4 gap-3">
-                      <span className="text-[12px] text-ink-subtle flex-shrink-0">{dateLabel}</span>
-                      <div className="flex gap-2">
+                    <div className="flex items-center justify-between mt-5 gap-4">
+                      <span className="text-[14px] text-ink-subtle flex-shrink-0">{dateLabel}</span>
+                      <div className="flex gap-3">
                         <button
                           onClick={() => markDone(reminder.id)}
-                          className="text-[13px] font-medium px-5 py-2 rounded-full bg-mint-soft text-mint hover:bg-mint/25 cursor-pointer transition-all active:scale-95"
+                          className="text-[15px] font-semibold px-7 py-3 rounded-full bg-mint-soft text-mint hover:bg-mint/25 cursor-pointer transition-all active:scale-95"
                         >
                           Done
                         </button>
                         <button
                           onClick={() => snooze(reminder.id)}
-                          className="text-[13px] font-medium px-5 py-2 rounded-full bg-elevated text-ink-muted hover:text-ink-secondary cursor-pointer transition-all active:scale-95"
+                          className="text-[15px] font-semibold px-7 py-3 rounded-full bg-elevated text-ink-muted hover:text-ink-secondary cursor-pointer transition-all active:scale-95"
                         >
                           Snooze
                         </button>
