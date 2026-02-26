@@ -5,8 +5,6 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
-  signInWithRedirect,
-  getRedirectResult,
   signOut,
 } from 'firebase/auth';
 
@@ -27,24 +25,8 @@ function getFirebaseAuth() {
 export async function signInWithGoogle(): Promise<string> {
   const auth = getFirebaseAuth();
   const provider = new GoogleAuthProvider();
-  try {
-    const result = await signInWithPopup(auth, provider);
-    return await result.user.getIdToken();
-  } catch (err: unknown) {
-    const code = (err as { code?: string }).code;
-    if (code === 'auth/popup-blocked' || code === 'auth/popup-closed-by-user') {
-      await signInWithRedirect(auth, provider);
-      return '';
-    }
-    throw err;
-  }
-}
-
-export async function checkRedirectResult(): Promise<string | null> {
-  const auth = getFirebaseAuth();
-  const result = await getRedirectResult(auth);
-  if (result) return await result.user.getIdToken();
-  return null;
+  const result = await signInWithPopup(auth, provider);
+  return await result.user.getIdToken();
 }
 
 export async function firebaseSignOut() {

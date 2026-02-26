@@ -1,19 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { signInWithGoogle, checkRedirectResult } from '@/lib/firebase-client';
+import { signInWithGoogle } from '@/lib/firebase-client';
 
 export default function LandingPage() {
   const router = useRouter();
   const [signing, setSigning] = useState(false);
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    checkRedirectResult().then((token) => {
-      if (token) completeSignIn(token);
-    });
-  });
 
   const completeSignIn = async (token: string) => {
     const res = await fetch('/api/auth/signin', {
