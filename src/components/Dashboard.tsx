@@ -194,7 +194,7 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
           </div>
 
           {/* Filter tabs */}
-          <div className="flex gap-3 mb-10 overflow-x-auto no-scrollbar animate-fade-in-delay">
+          <div className="flex gap-4 mb-12 overflow-x-auto no-scrollbar animate-fade-in-delay">
             {[
               { key: 'active', label: 'Upcoming', count: active.length },
               { key: 'snoozed', label: 'Snoozed', count: snoozed.length },
@@ -203,13 +203,20 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
               <button
                 key={f.key}
                 onClick={() => setFilter(f.key)}
-                className={`text-[15px] px-6 py-3 rounded-full cursor-pointer transition-all active:scale-95 whitespace-nowrap ${
+                className={`text-[16px] px-7 py-3.5 rounded-full cursor-pointer transition-all active:scale-95 whitespace-nowrap flex items-center gap-2.5 ${
                   filter === f.key
                     ? 'bg-ink text-dark font-semibold'
                     : 'text-ink-muted hover:text-ink-secondary hover:bg-surface'
                 }`}
               >
-                {f.label} {f.count > 0 && <span className="ml-1 opacity-60">{f.count}</span>}
+                {f.label}
+                {f.count > 0 && (
+                  <span className={`text-[13px] min-w-[22px] h-[22px] rounded-full flex items-center justify-center ${
+                    filter === f.key ? 'bg-dark/20 text-dark' : 'bg-surface text-ink-muted'
+                  }`}>
+                    {f.count}
+                  </span>
+                )}
               </button>
             ))}
           </div>
