@@ -107,7 +107,6 @@ export default function OnboardingFlow() {
   const handleChoice = (value: string) => {
     if (!activeQ) return;
     saveAnswer(activeQ.key, activeQ.category, value);
-
     if (showFollowUp || !currentQ?.followUp) {
       advance();
     } else if (currentQ.type === 'yesno' && value === 'Yes' && currentQ.followUp) {
@@ -120,62 +119,60 @@ export default function OnboardingFlow() {
   const handleInput = () => {
     if (!activeQ || !inputValue.trim()) return;
     saveAnswer(activeQ.key, activeQ.category, inputValue.trim());
-    if (showFollowUp || !currentQ?.followUp) {
-      advance();
-    } else {
-      advance();
-    }
+    advance();
   };
 
   const submitAll = async () => {
     setPhase('generating');
     setGenerating(true);
-
     await fetch('/api/answers', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ answers: collectedAnswers }),
     });
-
     await fetch('/api/generate', { method: 'POST' });
-
     setGenerating(false);
     router.push('/dashboard');
     router.refresh();
   };
 
-  // Phase 1: Pick categories
+  // Phase 1: Categories
   if (phase === 'categories') {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6 py-12">
-        <div className="max-w-md w-full animate-fade-in">
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold tracking-tight mb-2">What areas of your life should we track?</h1>
-            <p className="text-ink-muted text-sm">Pick all that apply. We&apos;ll ask a few quick questions for each.</p>
-          </div>
+      <main className="min-h-screen flex items-center justify-center px-6 py-16">
+        <div className="max-w-sm w-full animate-fade-in">
+          <h1 className="text-[28px] font-bold tracking-tight leading-tight mb-2">
+            What should we track?
+          </h1>
+          <p className="text-ink-muted text-[14px] mb-10">
+            Pick the areas that matter to you.
+          </p>
 
-          <div className="grid grid-cols-2 gap-3 mb-8">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => toggleCat(cat.id)}
-                className={`text-left p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                  selectedCats.includes(cat.id)
-                    ? 'border-mint bg-mint-glow'
-                    : 'border-border hover:border-border-light'
-                }`}
-              >
-                <div className="text-2xl mb-1">{cat.icon}</div>
-                <div className="text-sm font-semibold">{cat.label}</div>
-                <div className="text-xs text-ink-muted">{cat.desc}</div>
-              </button>
-            ))}
+          <div className="grid grid-cols-2 gap-3 mb-10">
+            {CATEGORIES.map((cat) => {
+              const selected = selectedCats.includes(cat.id);
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => toggleCat(cat.id)}
+                  className={`text-left p-5 rounded-2xl cursor-pointer transition-all ${
+                    selected
+                      ? 'bg-mint-glow ring-[1.5px] ring-mint'
+                      : 'bg-surface hover:bg-surface-hover'
+                  }`}
+                >
+                  <div className="text-[22px] mb-2">{cat.icon}</div>
+                  <div className="text-[14px] font-semibold mb-0.5">{cat.label}</div>
+                  <div className="text-[12px] text-ink-muted leading-snug">{cat.desc}</div>
+                </button>
+              );
+            })}
           </div>
 
           <button
             onClick={() => setPhase('questions')}
             disabled={selectedCats.length === 0}
-            className="w-full bg-mint hover:bg-mint-hover text-void font-semibold py-4 rounded-xl text-sm cursor-pointer transition-all disabled:opacity-30"
+            className="w-full h-[52px] bg-mint hover:bg-mint-hover text-black font-semibold rounded-full text-[15px] cursor-pointer transition-all disabled:opacity-20 active:scale-[0.98]"
           >
             {selectedCats.length === 0
               ? 'Pick at least one'
@@ -191,14 +188,14 @@ export default function OnboardingFlow() {
     return (
       <main className="min-h-screen flex items-center justify-center px-6">
         <div className="text-center animate-fade-in">
-          <div className="w-12 h-12 rounded-xl bg-mint mx-auto mb-6 animate-pulse-glow flex items-center justify-center">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#050505" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <div className="w-14 h-14 rounded-2xl bg-mint mx-auto mb-8 flex items-center justify-center animate-breathe">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
               <path d="M13.73 21a2 2 0 0 1-3.46 0" />
             </svg>
           </div>
-          <p className="text-lg font-semibold mb-2">Building your reminders...</p>
-          <p className="text-sm text-ink-muted">This takes about 5 seconds.</p>
+          <p className="text-[18px] font-semibold mb-2">Building your reminders</p>
+          <p className="text-[14px] text-ink-muted">Just a few seconds...</p>
         </div>
       </main>
     );
@@ -207,18 +204,20 @@ export default function OnboardingFlow() {
   // Phase 2: Questions
   if (!activeQ) return null;
 
-  const catLabel = CATEGORIES.find((c) => c.id === currentCat)?.label || '';
+  const catInfo = CATEGORIES.find((c) => c.id === currentCat);
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-6 py-12">
-      <div className="max-w-md w-full">
-        {/* Progress bar */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-mint font-medium">{catLabel}</span>
-            <span className="text-xs text-ink-muted">{Math.round(progress)}%</span>
+    <main className="min-h-screen flex items-center justify-center px-6 py-16">
+      <div className="max-w-sm w-full">
+        {/* Progress */}
+        <div className="mb-10">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[13px] text-ink-muted font-medium">
+              {catInfo?.icon} {catInfo?.label}
+            </span>
+            <span className="text-[12px] text-ink-subtle">{Math.round(progress)}%</span>
           </div>
-          <div className="h-1 bg-border rounded-full overflow-hidden">
+          <div className="h-[3px] bg-surface rounded-full overflow-hidden">
             <div
               className="h-full bg-mint rounded-full transition-all duration-500 ease-out"
               style={{ width: `${progress}%` }}
@@ -228,15 +227,17 @@ export default function OnboardingFlow() {
 
         {/* Question */}
         <div key={`${activeQ.category}-${activeQ.key}`} className="animate-slide-up">
-          <h2 className="text-xl font-bold tracking-tight mb-6">{activeQ.text}</h2>
+          <h2 className="text-[22px] font-bold tracking-tight leading-tight mb-8">
+            {activeQ.text}
+          </h2>
 
           {activeQ.type === 'choice' && (
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {activeQ.options?.map((opt) => (
                 <button
                   key={opt}
                   onClick={() => handleChoice(opt)}
-                  className="w-full text-left px-5 py-3.5 rounded-xl border border-border bg-surface hover:border-mint hover:bg-mint-dim text-sm cursor-pointer transition-all"
+                  className="w-full text-left px-5 py-4 rounded-2xl bg-surface hover:bg-surface-hover text-[14px] cursor-pointer transition-all active:scale-[0.98]"
                 >
                   {opt}
                 </button>
@@ -248,13 +249,13 @@ export default function OnboardingFlow() {
             <div className="flex gap-3">
               <button
                 onClick={() => handleChoice('Yes')}
-                className="flex-1 px-5 py-3.5 rounded-xl border border-border bg-surface hover:border-mint hover:bg-mint-dim text-sm font-medium cursor-pointer transition-all"
+                className="flex-1 py-4 rounded-2xl bg-surface hover:bg-surface-hover text-[14px] font-medium cursor-pointer transition-all active:scale-[0.98]"
               >
                 Yes
               </button>
               <button
                 onClick={() => handleChoice('No')}
-                className="flex-1 px-5 py-3.5 rounded-xl border border-border bg-surface hover:border-mint hover:bg-mint-dim text-sm font-medium cursor-pointer transition-all"
+                className="flex-1 py-4 rounded-2xl bg-surface hover:bg-surface-hover text-[14px] font-medium cursor-pointer transition-all active:scale-[0.98]"
               >
                 No
               </button>
@@ -268,13 +269,13 @@ export default function OnboardingFlow() {
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleInput()}
                 placeholder={activeQ.placeholder}
-                className="flex-1 px-4 py-3.5 rounded-xl border border-border bg-surface text-ink text-sm focus:outline-none focus:border-mint transition-all"
+                className="flex-1 px-5 py-4 rounded-2xl bg-surface text-ink text-[14px] focus:outline-none focus:ring-[1.5px] focus:ring-mint/50 transition-all placeholder:text-ink-subtle"
                 autoFocus
               />
               <button
                 onClick={handleInput}
                 disabled={!inputValue.trim()}
-                className="px-6 py-3.5 rounded-xl bg-mint text-void font-semibold text-sm cursor-pointer transition-all hover:bg-mint-hover disabled:opacity-30"
+                className="px-7 py-4 rounded-2xl bg-mint text-black font-semibold text-[14px] cursor-pointer transition-all hover:bg-mint-hover disabled:opacity-20 active:scale-[0.98]"
               >
                 Next
               </button>
@@ -285,9 +286,9 @@ export default function OnboardingFlow() {
         {/* Skip */}
         <button
           onClick={advance}
-          className="mt-6 text-xs text-ink-muted hover:text-ink-subtle cursor-pointer"
+          className="mt-8 text-[13px] text-ink-subtle hover:text-ink-muted cursor-pointer transition-all"
         >
-          Skip this question
+          Skip
         </button>
       </div>
     </main>
