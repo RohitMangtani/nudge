@@ -135,7 +135,7 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
 
   if (loading) {
     return (
-      <main className="min-h-screen px-6 py-16">
+      <main className="min-h-dvh px-6 py-12">
         <div className="max-w-lg mx-auto">
           <div className="h-5 w-28 animate-shimmer rounded-lg mb-3" />
           <div className="h-9 w-44 animate-shimmer rounded-lg mb-16" />
@@ -158,25 +158,27 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
               </button>
               <span className="text-[18px] font-semibold">Settings</span>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3">
               <button onClick={() => { setMenuOpen(false); router.push('/onboarding'); }} className="flex items-center gap-4 w-full px-6 py-5 rounded-2xl bg-surface hover:bg-surface-hover text-[16px] font-medium cursor-pointer active:scale-[0.98] transition-all">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /></svg>
-                Edit answers
-              </button>
-              <button onClick={handleReset} disabled={resetting} className="flex items-center gap-4 w-full px-6 py-5 rounded-2xl bg-surface hover:bg-surface-hover text-[16px] font-medium cursor-pointer active:scale-[0.98] transition-all disabled:opacity-40">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>
-                {resetting ? 'Resetting...' : 'Start over'}
+                Update my info
               </button>
               <button onClick={handleSignOut} className="flex items-center gap-4 w-full px-6 py-5 rounded-2xl bg-surface hover:bg-surface-hover text-[16px] font-medium text-ink-muted cursor-pointer active:scale-[0.98] transition-all">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
                 Sign out
               </button>
             </div>
+            <div className="mt-6 pt-6 border-t border-border">
+              <button onClick={handleReset} disabled={resetting} className="flex items-center gap-4 w-full px-6 py-4 rounded-2xl text-[15px] font-medium text-danger cursor-pointer active:scale-[0.98] transition-all disabled:opacity-40 hover:bg-danger/5">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>
+                {resetting ? 'Resetting...' : 'Start over'}
+              </button>
+            </div>
           </div>
         </div>
       )}
 
-      <main className="min-h-screen px-6 py-16">
+      <main className="min-h-dvh px-6 py-12">
         <div className="max-w-lg mx-auto">
 
           {/* Header */}
@@ -211,7 +213,7 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
               >
                 {f.label}
                 {f.count > 0 && (
-                  <span className={`text-[13px] min-w-[22px] h-[22px] rounded-full flex items-center justify-center ${
+                  <span className={`text-[13px] min-w-[24px] h-[24px] px-1.5 rounded-full flex items-center justify-center ${
                     filter === f.key ? 'bg-dark/20 text-dark' : 'bg-surface text-ink-muted'
                   }`}>
                     {f.count}

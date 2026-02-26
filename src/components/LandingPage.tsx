@@ -37,7 +37,7 @@ export default function LandingPage() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col justify-between px-6 py-16 sm:py-20">
+    <main className="h-dvh flex flex-col justify-between px-6 py-12 sm:py-16 overflow-hidden">
 
       {/* Top: Logo */}
       <div className="animate-fade-in">
@@ -53,7 +53,7 @@ export default function LandingPage() {
       </div>
 
       {/* Center: Hero */}
-      <div className="flex-1 flex flex-col justify-center max-w-lg py-20">
+      <div className="flex-1 flex flex-col justify-center max-w-lg py-10">
         <div className="animate-fade-in-delay">
           <h1 className="text-[48px] sm:text-[60px] font-bold tracking-[-0.035em] leading-[1.04] mb-8">
             Life maintenance<br />

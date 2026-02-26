@@ -154,7 +154,7 @@ export default function OnboardingFlow() {
   /* Phase 1: Categories */
   if (phase === 'categories') {
     return (
-      <main className="min-h-screen px-6 py-16">
+      <main className="min-h-dvh px-6 py-12">
         <div className="max-w-md mx-auto animate-fade-in">
           <h1 className="text-[34px] font-bold tracking-tight leading-tight mb-4">
             What should we track?
@@ -203,7 +203,7 @@ export default function OnboardingFlow() {
   /* Phase 3: Generating */
   if (phase === 'generating' || generating) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6">
+      <main className="min-h-dvh flex items-center justify-center px-6">
         <div className="text-center animate-fade-in">
           <div className="w-20 h-20 rounded-3xl bg-mint mx-auto mb-12 flex items-center justify-center animate-breathe">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -239,7 +239,7 @@ export default function OnboardingFlow() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col px-6 py-16">
+    <main className="h-dvh flex flex-col px-6 py-12 overflow-hidden">
       <div className="max-w-md mx-auto w-full">
         {/* Back */}
         <button
