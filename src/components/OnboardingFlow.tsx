@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface Question {
   category: string;
@@ -34,11 +34,11 @@ function CatIcon({ id, size = 26 }: { id: string; size?: number }) {
 }
 
 const CATEGORIES = [
-  { id: 'health', label: 'Health', desc: 'Doctor, dentist, eyes, meds' },
-  { id: 'car', label: 'Car', desc: 'Oil, tires, registration' },
-  { id: 'home', label: 'Home', desc: 'Lease, filters, cleaning' },
-  { id: 'finance', label: 'Finance', desc: 'Credit, taxes, subscriptions' },
-  { id: 'personal', label: 'Personal', desc: 'License, passport, haircuts' },
+  { id: 'health', label: 'Health', desc: 'Doctor, dentist, meds' },
+  { id: 'car', label: 'Car', desc: 'Oil, tires, tags' },
+  { id: 'home', label: 'Home', desc: 'Lease, filters, clean' },
+  { id: 'finance', label: 'Finance', desc: 'Credit, taxes, subs' },
+  { id: 'personal', label: 'Personal', desc: 'License, passport' },
   { id: 'pets', label: 'Pets', desc: 'Vet, meds, grooming' },
 ];
 
@@ -78,6 +78,8 @@ const QUESTIONS: Record<string, Question[]> = {
 
 export default function OnboardingFlow() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isUpdate = searchParams.get('mode') === 'update';
   const [phase, setPhase] = useState<'categories' | 'questions' | 'generating'>('categories');
   const [selectedCats, setSelectedCats] = useState<string[]>([]);
   const [currentCatIndex, setCurrentCatIndex] = useState(0);
@@ -156,6 +158,15 @@ export default function OnboardingFlow() {
     return (
       <main className="min-h-dvh px-6 py-12">
         <div className="max-w-md mx-auto animate-fade-in">
+          {isUpdate && (
+            <button
+              onClick={() => router.back()}
+              className="flex items-center gap-2 text-[15px] text-ink-muted mb-10 cursor-pointer active:opacity-60 transition-all"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+              Back
+            </button>
+          )}
           <h1 className="text-[34px] font-bold tracking-tight leading-tight mb-4">
             What should we track?
           </h1>
@@ -170,17 +181,17 @@ export default function OnboardingFlow() {
                 <button
                   key={cat.id}
                   onClick={() => toggleCat(cat.id)}
-                  className={`text-left p-7 rounded-3xl cursor-pointer transition-all active:scale-[0.97] ${
+                  className={`text-left px-6 py-7 rounded-3xl cursor-pointer transition-all active:scale-[0.97] ${
                     selected
                       ? 'bg-mint-glow ring-[1.5px] ring-mint'
                       : 'bg-surface hover:bg-surface-hover'
                   }`}
                 >
-                  <div className={`mb-5 ${selected ? 'text-mint' : 'text-ink-muted'}`}>
+                  <div className={`mb-4 ${selected ? 'text-mint' : 'text-ink-muted'}`}>
                     <CatIcon id={cat.id} />
                   </div>
-                  <div className="text-[17px] font-semibold mb-1.5">{cat.label}</div>
-                  <div className="text-[14px] text-ink-muted leading-snug">{cat.desc}</div>
+                  <div className="text-[16px] font-semibold mb-1">{cat.label}</div>
+                  <div className="text-[13px] text-ink-muted leading-snug">{cat.desc}</div>
                 </button>
               );
             })}

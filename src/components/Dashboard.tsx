@@ -159,7 +159,7 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
               <span className="text-[18px] font-semibold">Settings</span>
             </div>
             <div className="space-y-3">
-              <button onClick={() => { setMenuOpen(false); router.push('/onboarding'); }} className="flex items-center gap-4 w-full px-6 py-5 rounded-2xl bg-surface hover:bg-surface-hover text-[16px] font-medium cursor-pointer active:scale-[0.98] transition-all">
+              <button onClick={() => { setMenuOpen(false); router.push('/onboarding?mode=update'); }} className="flex items-center gap-4 w-full px-6 py-5 rounded-2xl bg-surface hover:bg-surface-hover text-[16px] font-medium cursor-pointer active:scale-[0.98] transition-all">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /></svg>
                 Update my info
               </button>
@@ -205,7 +205,7 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
               <button
                 key={f.key}
                 onClick={() => setFilter(f.key)}
-                className={`text-[16px] px-7 py-3.5 rounded-full cursor-pointer transition-all active:scale-95 whitespace-nowrap flex items-center gap-2.5 ${
+                className={`text-[15px] h-[44px] px-6 rounded-full cursor-pointer transition-all active:scale-95 whitespace-nowrap inline-flex items-center gap-2 ${
                   filter === f.key
                     ? 'bg-ink text-dark font-semibold'
                     : 'text-ink-muted hover:text-ink-secondary hover:bg-surface'
