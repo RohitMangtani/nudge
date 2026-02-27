@@ -33,6 +33,33 @@ function CatIcon({ id, size = 26 }: { id: string; size?: number }) {
   }
 }
 
+const OPTION_HINTS: Record<string, string> = {
+  'Recently': 'Within the last month',
+  'This year': 'Past 6–12 months',
+  'Over a year ago': '12+ months',
+  'No clue': 'Can\'t remember',
+  'Pretty recent': 'Within 3 months',
+  'A few months ago': '3–6 months back',
+  'It\'s been a while': '6+ months',
+  'No idea': 'Can\'t remember',
+  'This month': 'Within 4 weeks',
+  'A couple months': '2–3 months ago',
+  'No comment': 'Rather not say',
+  'Yep, recently': 'Within 3 months',
+  'Never have': 'Haven\'t checked yet',
+  'Never checked': 'Haven\'t looked into it',
+  'Nah, I\'m on top of it': 'Reviewed recently',
+  'Probably a few': 'Some you forgot about',
+  'Definitely': 'More than a few lurking',
+  'Every month': '~12 times a year',
+  'Every few months': 'Every 2–3 months',
+  'Twice a year': 'Every 6 months',
+  'Yearly': 'Once a year',
+  'Every couple months': 'Every 2–3 months',
+  'When it gets bad': 'No set schedule',
+  'Rarely': 'A few times a year',
+};
+
 const CATEGORIES = [
   { id: 'health', label: 'Health', desc: 'Doctor, dentist, meds' },
   { id: 'car', label: 'Car', desc: 'Oil, tires, tags' },
@@ -293,9 +320,12 @@ export default function OnboardingFlow() {
                   <button
                     key={opt}
                     onClick={() => handleChoice(opt)}
-                    className="text-left px-5 py-6 rounded-2xl bg-surface hover:bg-surface-hover text-[16px] font-medium cursor-pointer transition-all active:scale-[0.97]"
+                    className="text-left px-6 py-7 rounded-2xl bg-surface hover:bg-surface-hover cursor-pointer transition-all active:scale-[0.97] flex flex-col justify-between min-h-[100px]"
                   >
-                    {opt}
+                    <span className="text-[16px] font-medium">{opt}</span>
+                    {OPTION_HINTS[opt] && (
+                      <span className="text-[13px] text-ink-subtle mt-2 leading-snug">{OPTION_HINTS[opt]}</span>
+                    )}
                   </button>
                 ))}
               </div>

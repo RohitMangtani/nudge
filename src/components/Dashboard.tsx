@@ -283,7 +283,7 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
               <button
                 type="submit"
                 disabled={!addText.trim() || adding}
-                className="w-full mt-4 py-4 rounded-2xl bg-mint text-dark text-[16px] font-semibold cursor-pointer transition-all active:scale-[0.98] disabled:opacity-40"
+                className="w-full mt-4 py-4 rounded-2xl bg-mint text-white text-[16px] font-semibold cursor-pointer transition-all active:scale-[0.98] disabled:opacity-40"
               >
                 {adding ? 'Adding...' : 'Add reminder'}
               </button>
@@ -335,7 +335,7 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
                       value={checkinAnswers[c.id] || ''}
                       onChange={(e) => setCheckinAnswers((prev) => ({ ...prev, [c.id]: e.target.value }))}
                       placeholder="Type your answer..."
-                      className="flex-1 px-4 py-3 rounded-xl bg-white/60 text-[15px] text-ink placeholder:text-ink-subtle outline-none focus:ring-2 focus:ring-warn/30"
+                      className="flex-1 px-4 py-3 rounded-xl bg-surface text-[15px] text-ink placeholder:text-ink-subtle outline-none focus:ring-2 focus:ring-warn/30"
                       onKeyDown={(e) => { if (e.key === 'Enter') answerCheckin(c); }}
                     />
                     <button
@@ -363,7 +363,7 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
                 onClick={() => setFilter(f.key)}
                 className={`text-[15px] px-5 py-2.5 rounded-xl cursor-pointer transition-all active:scale-95 whitespace-nowrap inline-flex items-center gap-2 ${
                   filter === f.key
-                    ? 'bg-ink text-dark font-semibold'
+                    ? 'bg-ink text-white font-semibold'
                     : 'text-ink-muted hover:text-ink-secondary hover:bg-surface'
                 }`}
               >
@@ -476,7 +476,7 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
       {/* FAB — Quick Add */}
       <button
         onClick={() => setAddOpen(true)}
-        className="fixed bottom-8 right-8 w-14 h-14 rounded-full bg-mint text-dark flex items-center justify-center shadow-lg cursor-pointer hover:scale-105 active:scale-95 transition-all z-50"
+        className="fixed bottom-8 right-8 w-14 h-14 rounded-full bg-mint text-white flex items-center justify-center shadow-lg cursor-pointer hover:scale-105 active:scale-95 transition-all z-50"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
       </button>
