@@ -37,7 +37,7 @@ export default function LandingPage() {
   };
 
   return (
-    <main className="h-dvh flex flex-col justify-between px-8 py-14 sm:py-16 overflow-hidden">
+    <main className="h-dvh flex flex-col justify-between px-8 py-14 sm:py-16 overflow-hidden max-w-lg mx-auto">
 
       {/* Logo */}
       <div className="animate-fade-in">
@@ -53,7 +53,7 @@ export default function LandingPage() {
       </div>
 
       {/* Hero */}
-      <div className="flex-1 flex flex-col justify-center max-w-lg py-8">
+      <div className="flex-1 flex flex-col justify-center py-8">
         <div className="animate-fade-in-delay">
           <h1 className="text-[42px] sm:text-[56px] font-bold tracking-[-0.035em] leading-[1.06] mb-6">
             Life maintenance<br />
@@ -66,7 +66,7 @@ export default function LandingPage() {
       </div>
 
       {/* CTA */}
-      <div className="max-w-lg w-full">
+      <div className="w-full">
         <div className="animate-fade-in-delay-2">
           <button
             onClick={handleSignIn}

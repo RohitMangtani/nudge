@@ -363,7 +363,7 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
                 onClick={() => setFilter(f.key)}
                 className={`text-[15px] px-5 py-2.5 rounded-xl cursor-pointer transition-all active:scale-95 whitespace-nowrap inline-flex items-center gap-2 ${
                   filter === f.key
-                    ? 'bg-ink text-white font-semibold'
+                    ? 'bg-ink text-dark font-semibold'
                     : 'text-ink-muted hover:text-ink-secondary hover:bg-surface'
                 }`}
               >
