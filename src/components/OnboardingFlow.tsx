@@ -288,12 +288,12 @@ export default function OnboardingFlow() {
             </h2>
 
             {activeQ.type === 'choice' && (
-              <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
                 {activeQ.options?.map((opt) => (
                   <button
                     key={opt}
                     onClick={() => handleChoice(opt)}
-                    className="w-full text-left px-6 py-5 rounded-xl bg-surface hover:bg-surface-hover text-[16px] cursor-pointer transition-all active:scale-[0.98]"
+                    className="text-left px-5 py-6 rounded-2xl bg-surface hover:bg-surface-hover text-[16px] font-medium cursor-pointer transition-all active:scale-[0.97]"
                   >
                     {opt}
                   </button>
