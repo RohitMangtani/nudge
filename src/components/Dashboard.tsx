@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { firebaseSignOut } from '@/lib/firebase-client';
 
@@ -14,6 +14,15 @@ interface Reminder {
   recurrence_label: string | null;
   completed: boolean;
   snoozed_until: string | null;
+  source?: string;
+}
+
+interface Checkin {
+  id: string;
+  category: string;
+  key: string;
+  prompt: string;
+  due_date: string;
 }
 
 function CatIcon({ id, size = 22 }: { id: string; size?: number }) {
@@ -71,10 +80,21 @@ function dueBadgeStyle(days: number): string {
 export default function NudgeDashboard({ userName }: { userName: string }) {
   const router = useRouter();
   const [reminders, setReminders] = useState<Reminder[]>([]);
+  const [checkins, setCheckins] = useState<Checkin[]>([]);
   const [filter, setFilter] = useState<string>('active');
   const [menuOpen, setMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [resetting, setResetting] = useState(false);
+
+  // Quick-add state
+  const [addOpen, setAddOpen] = useState(false);
+  const [addText, setAddText] = useState('');
+  const [adding, setAdding] = useState(false);
+  const addInputRef = useRef<HTMLInputElement>(null);
+
+  // Check-in inline answer state
+  const [checkinAnswers, setCheckinAnswers] = useState<Record<string, string>>({});
+  const [submittingCheckin, setSubmittingCheckin] = useState<string | null>(null);
 
   const fetchReminders = useCallback(async () => {
     const res = await fetch('/api/reminders');
@@ -83,7 +103,20 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
     setLoading(false);
   }, []);
 
-  useEffect(() => { fetchReminders(); }, [fetchReminders]);
+  const fetchCheckins = useCallback(async () => {
+    const res = await fetch('/api/checkins');
+    if (res.ok) {
+      const data = await res.json();
+      setCheckins(data.checkins || []);
+    }
+  }, []);
+
+  useEffect(() => { fetchReminders(); fetchCheckins(); }, [fetchReminders, fetchCheckins]);
+
+  // Focus input when add sheet opens
+  useEffect(() => {
+    if (addOpen) setTimeout(() => addInputRef.current?.focus(), 100);
+  }, [addOpen]);
 
   const markDone = async (id: string) => {
     setReminders((prev) => prev.map((r) => r.id === id ? { ...r, completed: true } : r));
@@ -92,6 +125,8 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ reminderId: id, completed: true }),
     });
+    // Re-fetch to pick up any auto-created recurring successor
+    fetchReminders();
   };
 
   const snooze = async (id: string) => {
@@ -104,6 +139,52 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ reminderId: id, snoozed_until: dateStr }),
     });
+  };
+
+  const handleQuickAdd = async () => {
+    if (!addText.trim() || adding) return;
+    setAdding(true);
+    const res = await fetch('/api/reminders/quick-add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: addText.trim() }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setReminders((prev) => [data.reminder, ...prev]);
+      setAddText('');
+      setAddOpen(false);
+    }
+    setAdding(false);
+  };
+
+  const dismissCheckin = async (id: string) => {
+    setCheckins((prev) => prev.filter((c) => c.id !== id));
+    await fetch('/api/checkins', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ checkinId: id }),
+    });
+  };
+
+  const answerCheckin = async (checkin: Checkin) => {
+    const value = checkinAnswers[checkin.id]?.trim();
+    if (!value) return;
+    setSubmittingCheckin(checkin.id);
+    const res = await fetch('/api/checkins', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ checkinId: checkin.id, key: checkin.key, category: checkin.category, value }),
+    });
+    if (res.ok) {
+      setCheckins((prev) => prev.filter((c) => c.id !== checkin.id));
+      setCheckinAnswers((prev) => {
+        const next = { ...prev };
+        delete next[checkin.id];
+        return next;
+      });
+    }
+    setSubmittingCheckin(null);
   };
 
   const handleSignOut = async () => {
@@ -148,6 +229,7 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
 
   return (
     <>
+      {/* Settings sheet */}
       {menuOpen && (
         <div className="fixed inset-0 z-[999]">
           <div className="absolute inset-0 bg-black/40" onClick={() => setMenuOpen(false)} />
@@ -178,7 +260,39 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
         </div>
       )}
 
-      <main className="min-h-dvh px-8 py-14">
+      {/* Quick-add sheet */}
+      {addOpen && (
+        <div className="fixed inset-0 z-[999]">
+          <div className="absolute inset-0 bg-black/40" onClick={() => { setAddOpen(false); setAddText(''); }} />
+          <div className="absolute bottom-0 left-0 right-0 bg-elevated rounded-t-3xl p-8 pb-12 safe-area-bottom animate-slide-up">
+            <div className="flex items-center gap-4 mb-8">
+              <button onClick={() => { setAddOpen(false); setAddText(''); }} className="w-11 h-11 rounded-full bg-surface flex items-center justify-center cursor-pointer active:scale-95 transition-all">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+              </button>
+              <span className="text-[18px] font-semibold">Quick add</span>
+            </div>
+            <form onSubmit={(e) => { e.preventDefault(); handleQuickAdd(); }}>
+              <input
+                ref={addInputRef}
+                type="text"
+                value={addText}
+                onChange={(e) => setAddText(e.target.value)}
+                placeholder="dentist appointment march 15..."
+                className="w-full px-6 py-5 rounded-2xl bg-surface text-[16px] text-ink placeholder:text-ink-subtle outline-none focus:ring-2 focus:ring-mint/30"
+              />
+              <button
+                type="submit"
+                disabled={!addText.trim() || adding}
+                className="w-full mt-4 py-4 rounded-2xl bg-mint text-dark text-[16px] font-semibold cursor-pointer transition-all active:scale-[0.98] disabled:opacity-40"
+              >
+                {adding ? 'Adding...' : 'Add reminder'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      <main className="min-h-dvh px-8 py-14 pb-28">
         <div className="max-w-lg mx-auto">
 
           {/* Header */}
@@ -194,6 +308,48 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
               {firstName[0]?.toUpperCase()}
             </button>
           </div>
+
+          {/* Check-in cards */}
+          {checkins.length > 0 && (
+            <div className="mb-10 animate-fade-in">
+              {checkins.map((c) => (
+                <div key={c.id} className="rounded-2xl bg-warn/8 border border-warn/20 px-6 py-5 mb-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl bg-warn/15 flex items-center justify-center text-warn">
+                        <CatIcon id={c.category} size={18} />
+                      </div>
+                      <span className="text-[14px] text-ink-muted font-medium">{CAT_META[c.category]?.label || c.category}</span>
+                    </div>
+                    <button
+                      onClick={() => dismissCheckin(c.id)}
+                      className="text-ink-subtle hover:text-ink-muted cursor-pointer p-1"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                    </button>
+                  </div>
+                  <p className="text-[16px] font-medium mb-4">{c.prompt}</p>
+                  <div className="flex gap-3">
+                    <input
+                      type="text"
+                      value={checkinAnswers[c.id] || ''}
+                      onChange={(e) => setCheckinAnswers((prev) => ({ ...prev, [c.id]: e.target.value }))}
+                      placeholder="Type your answer..."
+                      className="flex-1 px-4 py-3 rounded-xl bg-white/60 text-[15px] text-ink placeholder:text-ink-subtle outline-none focus:ring-2 focus:ring-warn/30"
+                      onKeyDown={(e) => { if (e.key === 'Enter') answerCheckin(c); }}
+                    />
+                    <button
+                      onClick={() => answerCheckin(c)}
+                      disabled={!checkinAnswers[c.id]?.trim() || submittingCheckin === c.id}
+                      className="px-5 py-3 rounded-xl bg-warn/20 text-warn text-[14px] font-semibold cursor-pointer transition-all active:scale-95 disabled:opacity-40"
+                    >
+                      {submittingCheckin === c.id ? '...' : 'Update'}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Filter tabs */}
           <div className="flex gap-3 mb-12 overflow-x-auto no-scrollbar animate-fade-in-delay">
@@ -316,6 +472,14 @@ export default function NudgeDashboard({ userName }: { userName: string }) {
 
         </div>
       </main>
+
+      {/* FAB — Quick Add */}
+      <button
+        onClick={() => setAddOpen(true)}
+        className="fixed bottom-8 right-8 w-14 h-14 rounded-full bg-mint text-dark flex items-center justify-center shadow-lg cursor-pointer hover:scale-105 active:scale-95 transition-all z-50"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+      </button>
     </>
   );
 }

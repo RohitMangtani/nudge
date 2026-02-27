@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getUser } from '@/lib/auth';
 import { getServerSupabase } from '@/lib/supabase';
+import { parseRecurrenceLabel } from '@/lib/recurrence';
+import { isDuplicate } from '@/lib/dedup';
 import Anthropic from '@anthropic-ai/sdk';
 
 const anthropic = new Anthropic();
@@ -20,8 +22,26 @@ export async function POST() {
     return NextResponse.json({ error: 'No answers yet' }, { status: 400 });
   }
 
-  // Delete old AI-generated reminders before regenerating
-  await supabase.from('nudge_reminders').delete().eq('user_id', user.id);
+  // Only delete AI-generated, incomplete reminders — preserve manual, recurrence, and completed
+  await supabase
+    .from('nudge_reminders')
+    .delete()
+    .eq('user_id', user.id)
+    .eq('source', 'ai')
+    .eq('completed', false);
+
+  // Fetch surviving reminders so AI doesn't duplicate them
+  const { data: existing } = await supabase
+    .from('nudge_reminders')
+    .select('title, category')
+    .eq('user_id', user.id)
+    .eq('completed', false);
+
+  const existingTitles = (existing || []).map((r) => r.title);
+
+  const alreadyTracked = existing && existing.length > 0
+    ? `\n\nAlready tracked (do NOT duplicate these):\n${existing.map((r) => `- [${r.category}] ${r.title}`).join('\n')}`
+    : '';
 
   const answersText = answers
     .map((a) => `[${a.category}] ${a.key}: ${a.value}`)
@@ -40,7 +60,7 @@ export async function POST() {
 Today's date: ${today}
 
 User's answers:
-${answersText}
+${answersText}${alreadyTracked}
 
 Rules:
 - Generate practical, actionable reminders with specific due dates
@@ -50,6 +70,7 @@ Rules:
 - Set realistic due dates based on urgency
 - Keep descriptions to one helpful sentence
 - Cover everything their answers suggest they need
+- Do NOT create reminders for items listed under "Already tracked"
 
 Return ONLY a JSON array. Each object must have:
 - "category": the life area (health, car, home, finance, personal, pets)
@@ -57,7 +78,8 @@ Return ONLY a JSON array. Each object must have:
 - "description": one sentence of context
 - "due_date": "${today}" format (YYYY-MM-DD)
 - "recurring": boolean
-- "recurrence_label": if recurring, how often (e.g. "Every 6 months", "Yearly", "Every 5,000 miles")
+- "recurrence_label": if recurring, how often (e.g. "Every 6 months", "Yearly", "Every 3 months")
+- "recurrence_interval": if recurring, machine format (e.g. "6_months", "1_year", "3_months")
 
 Return ONLY the JSON array, no markdown, no explanation.`,
       },
@@ -76,7 +98,12 @@ Return ONLY the JSON array, no markdown, no explanation.`,
     return NextResponse.json({ error: 'Failed to parse reminders' }, { status: 500 });
   }
 
-  const rows = reminders.map((r: Record<string, unknown>) => ({
+  // Filter out duplicates of existing reminders
+  const filtered = reminders.filter(
+    (r: Record<string, unknown>) => !isDuplicate(r.title as string, existingTitles)
+  );
+
+  const rows = filtered.map((r: Record<string, unknown>) => ({
     user_id: user.id,
     category: r.category,
     title: r.title,
@@ -84,12 +111,22 @@ Return ONLY the JSON array, no markdown, no explanation.`,
     due_date: r.due_date,
     recurring: r.recurring || false,
     recurrence_label: r.recurrence_label || null,
+    recurrence_interval: (r.recurrence_interval as string) || parseRecurrenceLabel(r.recurrence_label as string) || null,
+    source: 'ai',
   }));
 
-  const { error } = await supabase.from('nudge_reminders').insert(rows);
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (rows.length > 0) {
+    const { error } = await supabase.from('nudge_reminders').insert(rows);
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
   }
+
+  // Track when reminders were last generated
+  await supabase
+    .from('nudge_users')
+    .update({ last_generated_at: new Date().toISOString() })
+    .eq('id', user.id);
 
   return NextResponse.json({ count: rows.length });
 }

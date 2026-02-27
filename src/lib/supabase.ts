@@ -18,6 +18,7 @@ export interface DbUser {
   name: string;
   firebase_uid: string | null;
   onboarding_complete: boolean;
+  last_generated_at: string | null;
   created_at: string;
 }
 
@@ -27,6 +28,7 @@ export interface DbAnswer {
   category: string;
   key: string;
   value: string;
+  updated_at: string;
   created_at: string;
 }
 
@@ -39,7 +41,23 @@ export interface DbReminder {
   due_date: string;
   recurring: boolean;
   recurrence_label: string | null;
+  recurrence_interval: string | null;
+  source: 'ai' | 'manual' | 'recurrence';
+  parent_id: string | null;
   completed: boolean;
+  completed_at: string | null;
   snoozed_until: string | null;
+  created_at: string;
+}
+
+export interface DbCheckin {
+  id: string;
+  user_id: string;
+  category: string;
+  key: string;
+  prompt: string;
+  due_date: string;
+  dismissed: boolean;
+  answered: boolean;
   created_at: string;
 }
