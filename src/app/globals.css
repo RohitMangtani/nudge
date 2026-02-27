@@ -26,24 +26,68 @@
   --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+@layer base {
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-body {
-  background-color: var(--color-dark);
-  color: var(--color-ink);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  line-height: 1.5;
-  letter-spacing: -0.015em;
+  body {
+    background-color: var(--color-dark);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.5;
+    letter-spacing: -0.015em;
+  }
+
+  ::selection {
+    background: var(--color-mint);
+    color: #fff;
+  }
+
+  button, a {
+    transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  ::-webkit-scrollbar { width: 0; }
 }
 
-::selection {
-  background: var(--color-mint);
-  color: #fff;
+@layer components {
+  .animate-fade-in {
+    animation: fade-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .animate-fade-in-delay {
+    animation: fade-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+  }
+
+  .animate-fade-in-delay-2 {
+    animation: fade-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+  }
+
+  .animate-fade-in-delay-3 {
+    animation: fade-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .animate-breathe {
+    animation: breathe 2.5s ease-in-out infinite;
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(90deg, var(--color-surface) 0%, var(--color-surface-hover) 50%, var(--color-surface) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .safe-area-bottom { padding-bottom: max(2.5rem, env(safe-area-inset-bottom)); }
 }
 
-/* Smooth entrance animations */
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
@@ -63,49 +107,3 @@ body {
   from { background-position: -200% 0; }
   to { background-position: 200% 0; }
 }
-
-.animate-fade-in {
-  animation: fade-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-.animate-fade-in-delay {
-  animation: fade-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
-}
-
-.animate-fade-in-delay-2 {
-  animation: fade-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
-}
-
-.animate-fade-in-delay-3 {
-  animation: fade-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
-}
-
-.animate-slide-up {
-  animation: slide-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-.animate-breathe {
-  animation: breathe 2.5s ease-in-out infinite;
-}
-
-/* Loading shimmer for skeleton states */
-.animate-shimmer {
-  background: linear-gradient(90deg, var(--color-surface) 0%, var(--color-surface-hover) 50%, var(--color-surface) 100%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
-}
-
-/* Global interactive transitions */
-button, a {
-  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* Hide scrollbar but keep functionality */
-::-webkit-scrollbar { width: 0; }
-
-/* Utility: hide horizontal scrollbar on filter pills */
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-/* Safe area for bottom sheet on notched phones */
-.safe-area-bottom { padding-bottom: max(2.5rem, env(safe-area-inset-bottom)); }
